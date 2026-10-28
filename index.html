@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMPERIUM VOLEY V4.8 - FIX PERMISSION</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#D90429">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#0F0F0F;--bg2:#181818;--bg3:#1F1F1F;--card:#1A1A1A;--border:#2A2A2A;--border-light:#3A3A3A;--red:#D90429;--red2:#E63946;--green:#00C896;--blue:#0096FF;--yellow:#FFBE0B;--purple:#7C4DFF;--pink:#FF006E;--text:#F5F5F5;--text2:#B8B8B8;--text3:#8A8A8A}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif}
+.landing-hero{background:radial-gradient(ellipse 80% 60% at 50% -10%, #3A0A0A 0%, var(--bg) 70%);padding:48px 16px 28px;text-align:center;border-bottom:1px solid var(--border)}
+.landing-hero h1{font-family:'Anton',sans-serif;font-size:42px;line-height:.9}.landing-hero h1 span{color:var(--red2)}
+.landing-badge{display:inline-flex;background:var(--text);color:#000;padding:7px 16px;border-radius:100px;font-weight:900;font-size:11px;margin:16px 0}
+.landing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;max-width:1100px;margin:18px auto;padding:0 12px}
+.card{background:linear-gradient(180deg,var(--bg2),var(--card));border:1px solid var(--border);border-left:4px solid var(--red);padding:16px;border-radius:20px;margin-bottom:14px}
+.card.blue{border-left-color:var(--blue)}.card.green{border-left-color:var(--green)}.card.yellow{border-left-color:var(--yellow)}.card.purple{border-left-color:var(--purple)}.card.gold{border-left-color:var(--yellow)}.card.orange{border-left-color:#FF6B00}
+.btn{background:var(--red);color:white;padding:12px 14px;border:none;font-weight:800;font-size:11px;border-radius:12px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-white{background:var(--text);color:black}.btn-green{background:var(--green);color:#000}.btn-outline{background:transparent;border:1.5px solid var(--border-light);color:var(--text2)}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.kpi-item{background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:14px;text-align:center}.kpi-item b{font-size:18px;display:block}
+.header{position:sticky;top:0;z-index:50;background:rgba(15,15,15,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
+.menu{display:flex;gap:6px;overflow-x:auto}.menu::-webkit-scrollbar{display:none}
+.menu button{white-space:nowrap;background:var(--bg2);border:1px solid var(--border);color:var(--text2);padding:8px 10px;font-weight:800;font-size:9px;border-radius:100px;min-height:44px}.menu button.active{background:var(--text);color:#000}
+input,select{width:100%;padding:12px;margin:6px 0;background:#0A0A0A;border:1px solid var(--border);color:white;border-radius:12px;min-height:44px}
+.badge{padding:5px 10px;font-size:11px;font-weight:800;border-radius:100px;display:inline-block}.al-dia{background:var(--text);color:black}.debe{background:var(--red);color:white}
+.tab{display:none}.tab.active{display:block}
+#login{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:100;display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--red);padding:24px;max-width:480px;width:100%;border-radius:24px;max-height:92vh;overflow-y:auto}
+.doc-item{border:1px solid var(--border);background:var(--bg);padding:12px;margin:8px 0;border-radius:14px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.upload-box{border:1.5px dashed var(--border-light);background:var(--bg);padding:12px;margin:8px 0;border-radius:14px}
+#modalEdit{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:200;display:none;padding:14px;overflow:auto}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--red);padding:20px;max-width:500px;width:100%;border-radius:18px;margin:auto;max-height:90vh;overflow-y:auto}
+.asis-row{display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg2);border:1px solid var(--border);margin:6px 0;border-radius:14px}
+.switch{width:52px;height:30px;background:#2a2a2a;border-radius:100px;position:relative;cursor:pointer}.switch.on{background:var(--green)}.switch::after{content:'';position:absolute;width:24px;height:24px;background:white;border-radius:50%;top:3px;left:3px;transition:.2s}.switch.on::after{left:25px}
+.grid-2{display:grid;grid-template-columns:1.1fr 1.9fr;gap:14px}
+.qr-box{background:white;padding:14px;border-radius:16px;text-align:center;margin:12px 0}.qr-box img{width:100%;max-width:220px;border-radius:12px;display:block;margin:0 auto}
+.wasa-float{position:fixed;bottom:22px;right:18px;z-index:60;background:#25D366;color:white;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;border:none}
+.skill-row{background:var(--bg);border:1px solid var(--border);padding:14px;border-radius:16px;margin:10px 0}
+.skill-boxes{display:flex;gap:4px}.skill-box{width:100%;height:22px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer}
+.skill-box.filled{background:var(--green)}.skill-box.filled.mid{background:var(--yellow)}.skill-box.filled.low{background:var(--red)}
+.skill-bar{height:8px;background:var(--bg3);border-radius:100px;overflow:hidden;margin-top:8px}.skill-bar-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--yellow),var(--green))}
+.perfil-img{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--red);background:#222;display:block;margin:0 auto}
+.perfil-img-small{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--red);background:#222}
+.perfil-upload-box{background:linear-gradient(180deg,var(--bg2),var(--bg));border:2px dashed var(--purple);padding:16px;border-radius:16px;text-align:center;margin:12px 0}
+.podium{display:flex;gap:8px;align-items:end;justify-content:center;margin:16px 0}.podium-item{text-align:center;padding:12px;border-radius:12px;flex:1}.podium-item.gold{background:linear-gradient(180deg,#ffd700,#b8860b);color:black}.podium-item.silver{background:linear-gradient(180deg,#c0c0c0,#808080);color:black}.podium-item.bronze{background:linear-gradient(180deg,#cd7f32,#8b4513);color:white}
+.video-card{background:#000;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin:10px 0}.video-card video{width:100%;max-height:220px;background:#111}.video-info{padding:10px}
+.modelo-selected{border:2px solid #FF6B00 !important}
+@media(max-width:768px){.kpi{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}.menu{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,15,0.96);backdrop-filter:blur(16px);border-top:1px solid var(--border);padding:8px;justify-content:space-around;z-index:55}.menu button{flex:1;font-size:7px;padding:6px 2px}body{padding-bottom:90px}}
+</style>
+</head>
+<body>
+<div id="landing">
+<div class="landing-hero">
+<img src="logo.png" style="height:72px;border-radius:50%;border:3px solid var(--border-light);background:white">
+<h1>IMPERIUM <span>VOLEY</span></h1>
+<div class="landing-badge">CLUB OFICIAL • AGUACHICA • CESAR</div>
+<p style="max-width:620px;margin:10px auto;font-size:14px;color:var(--text2)">Nequi <b style="color:var(--green)">3024404924</b> - Entrenador</p>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px">
+<button class="btn" onclick="abrirLogin('R')">📝 INSCRIBIRME</button>
+<button class="btn btn-white" onclick="abrirLogin('J')">🏃 SOY JUGADOR</button>
+<button class="btn btn-outline" onclick="abrirLogin('E')">👨‍🏫 ENTRENADOR</button>
+</div>
+<div style="margin-top:14px"><button class="btn btn-green" onclick="contactarEntrenador()">📲 HABLAR CON ENTRENADOR 3024404924</button></div>
+</div>
+<div class="landing-grid">
+<div class="card blue"><h3 style="color:var(--blue)">🏆 CATEGORÍAS</h3><p style="font-size:13px;margin-top:8px"><b>Pequeña:</b> 8-11<br><b>Sub 15:</b> 12-15<br><b>Sub 17:</b> 16-17<br><b>Sub 20:</b> 18-20<br><b>Mayores:</b> 21+</p></div>
+<div class="card yellow"><h3 style="color:var(--yellow)">💳 PAGOS</h3><p style="font-size:13px;margin-top:8px"><b>Mensualidad:</b> $40.000<br><b>Inscripción:</b> $30.000<br><b>Nequi:</b> 3024404924</p><div class="qr-box"><img src="breb.png"><small style="color:black;font-weight:800">ESCANEA PARA PAGAR</small></div></div>
+<div class="card green"><h3 style="color:var(--green)">📋 REQUISITOS</h3><p style="font-size:13px;margin-top:8px">1. Adress / EPS<br>2. Cédula acudiente<br>3. Tarjeta deportista<br>4. Ficha firmada</p></div>
+</div>
+</div>
+<div id="login"><div class="login-box">
+<div style="display:flex;justify-content:space-between"><b>IMPERIUM</b><button class="btn" style="background:#222" onclick="cerrarLogin()">✕</button></div>
+<div id="boxE" style="display:none;margin-top:14px">
+<h3>👨‍🏫 Entrenador</h3>
+<div style="position:relative">
+<input id="clave" type="password" placeholder="Clave" style="padding-right:44px">
+<button type="button" onclick="toggleClave()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text2);font-size:18px;cursor:pointer">👁️</button>
+</div>
+<button class="btn" style="width:100%;margin-top:8px" onclick="loginEntrenador()">ENTRAR</button>
+</div>
+<div id="boxJ" style="display:none;margin-top:14px">
+<h3>🏃 Jugador</h3>
+<input id="filtroNombreJug" placeholder="Escribe tu nombre..." style="border:2px solid var(--blue)" oninput="filtrarJugadoresSelect()">
+<select id="selJug" size="6" style="height:160px;margin-top:8px"></select>
+<div id="contadorJug" style="font-size:11px;color:var(--yellow);margin:6px 0;font-weight:800"></div>
+<button class="btn btn-white" style="width:100%;margin-top:8px" onclick="loginJugador()">VER MI ESTADO</button>
+</div>
+<div id="boxR" style="display:none;margin-top:14px;max-height:65vh;overflow-y:auto;padding-right:6px">
+<h3>📝 Registro</h3>
+<input id="rNombre" placeholder="Nombre completo"><label style="font-size:11px;color:var(--green)">📅 Nacimiento</label><input id="rFechaNac" type="date"><select id="rGenero"><option>Masculino</option><option>Femenino</option></select><select id="rPos"><option>Armador</option><option>Central</option><option>Libero</option><option>Punta</option><option>Opuesto</option></select><input id="rTel" placeholder="WhatsApp">
+<div class="qr-box"><b style="color:black">NEQUI 3024404924</b><br><img src="breb.png"></div>
+<div class="upload-box" style="border-color:var(--green)"><b>📌 Adress</b><input type="file" id="fileRAdress" accept="image/*,.pdf" onchange="previewFile(this,'prevRAdress')"><img id="prevRAdress" style="width:100%;max-height:120px;object-fit:contain;margin-top:8px;display:none;border-radius:8px"><small id="txtRAdress" style="color:var(--green);font-size:10px"></small></div>
+<div class="upload-box" style="border-color:var(--blue)"><b>📌 Cédula</b><input type="file" id="fileRCedulaAcudiente" accept="image/*,.pdf" onchange="previewFile(this,'prevRCedula')"><img id="prevRCedula" style="width:100%;max-height:120px;object-fit:contain;margin-top:8px;display:none;border-radius:8px"><small id="txtRCedula" style="color:var(--blue);font-size:10px"></small></div>
+<div class="upload-box" style="border-color:var(--yellow)"><b>📌 Tarjeta</b><input type="file" id="fileRTarjeta" accept="image/*,.pdf" onchange="previewFile(this,'prevRTarjeta')"><img id="prevRTarjeta" style="width:100%;max-height:120px;object-fit:contain;margin-top:8px;display:none;border-radius:8px"><small id="txtRTarjeta" style="color:var(--yellow);font-size:10px"></small></div>
+<div class="upload-box" style="border-color:var(--purple)"><b>📌 Ficha</b><input type="file" id="fileRFicha" accept="image/*,.pdf" onchange="previewFile(this,'prevRFicha')"><img id="prevRFicha" style="width:100%;max-height:120px;object-fit:contain;margin-top:8px;display:none;border-radius:8px"><small id="txtRFicha" style="color:var(--purple);font-size:10px"></small></div>
+<button class="btn btn-green" style="width:100%;margin-top:10px;height:50px" onclick="enviarSolicitud()">✅ ENVIAR</button>
+</div>
+</div></div>
+<div id="vistaE" style="display:none">
+<div class="header"><b>IMPERIUM VOLEY</b><div class="menu"><button class="active" onclick="openTab('t1',this)">📋<br>Plan</button><button onclick="openTab('t6',this)">🏆<br>Cat</button><button onclick="openTab('t8',this)" style="background:#7c4dff;color:white">⭐<br>Hab</button><button onclick="openTab('t9',this)" style="background:gold;color:black">🏆<br>Rank</button><button onclick="openTab('t2',this)">📅<br>Asist</button><button onclick="openTab('t3',this)">💳<br>Finan</button><button onclick="openTab('t10',this)" style="background:#FF6B00;color:white">👕<br>Unif</button><button onclick="openTab('t7',this)">📁<br>Docs</button><button onclick="openTab('t5',this)">🔔<br><span id="numSol">0</span></button><button onclick="location.reload()" style="background:white;color:black">↩<br>Salir</button></div></div>
+<div style="padding:12px;max-width:1200px;margin:0 auto">
+<div id="t1" class="tab active">
+<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+<button class="btn btn-green" onclick="enviarRecordatorioMasivo()">📲 MASIVO</button>
+<button class="btn btn-white" onclick="exportarExcelPlantilla()">📊 PLANTILLA</button>
+<button class="btn" style="background:gold;color:black" onclick="exportarExcelFinanzas()">💰 FINANZAS</button>
+</div>
+<div class="grid-2"><div class="card"><h2>🏐 Nuevo Atleta</h2><input id="nombre" placeholder="Nombre"><label style="font-size:11px;color:var(--green)">📅 Nacimiento</label><input id="fechaNacimiento" type="date" onchange="calcEdad()"><div id="verEdad" style="font-size:12px;color:var(--green);font-weight:800"></div><select id="genero"><option>Masculino</option><option>Femenino</option></select><select id="pos"><option>Armador</option><option>Central</option><option>Libero</option><option>Punta</option><option>Opuesto</option></select><input id="tel" placeholder="WhatsApp"><select id="formaPago"><option>Nequi</option><option>Transferencia</option></select><label style="font-size:11px">💳 Fecha mensualidad</label><input id="fpago" type="date"><label style="font-size:11px">📝 Fecha inscripción</label><input id="finsc" type="date"><label style="font-size:11px"><input type="checkbox" id="inscPagadaCheck" checked> Insc pagada</label><div class="perfil-upload-box"><b>📸 Foto</b><input type="file" id="fileFotoNuevo" accept="image/*"><img id="previewFotoNuevo" style="width:70px;height:70px;border-radius:50%;margin:8px auto;display:none;object-fit:cover"></div><button class="btn" onclick="addJugador()" style="width:100%;margin-top:10px">REGISTRAR</button></div>
+<div class="card">
+<h2>📋 Plantilla</h2>
+<input id="buscar" placeholder="🔍 Buscar nombre..." style="border:2px solid var(--yellow)">
+<div id="resultadoBusqueda" style="font-size:11px;color:var(--yellow);margin:6px 0;font-weight:800"></div>
+<div id="list"></div>
+</div>
+</div>
+</div>
+<div id="t10" class="tab">
+<div class="card orange"><h2 style="color:#FF6B00">👕 UNIFORMES</h2><p style="font-size:11px;color:var(--text2)">Completo $50.000 / Camisa $35.000</p><div class="kpi" style="margin-top:12px"><div class="kpi-item"><b id="kpiUnifTotal">0</b><small>TOTAL</small></div><div class="kpi-item"><b id="kpiUnifPend">0</b><small>PEND</small></div><div class="kpi-item"><b id="kpiUnifEnt">0</b><small>ENTREG</small></div><div class="kpi-item"><b id="kpiUnifDinero" style="color:var(--green)">$0</b><small>$</small></div></div></div>
+<div class="card" style="border-left-color:#FF6B00"><h2 style="color:#FF6B00">🎬 Subir Modelo</h2>
+<div style="display:flex;gap:8px"><select id="modeloGenero" style="flex:1"><option value="Masculino">👦 Hombre</option><option value="Femenino">👧 Mujer</option></select><select id="modeloTipo" style="flex:1"><option value="Completo">Completo $50k</option><option value="Camisa">Camisa $35k</option></select></div>
+<input id="modeloNombre" placeholder="Nombre modelo Ej: Azul 2025">
+<input type="hidden" id="modeloValor" value="50000">
+<div class="upload-box" style="border-color:#FF6B00"><b>🎥 Video (max 3MB para Firebase)</b><input type="file" id="fileModeloVideo" accept="video/*"><video id="previewModeloVideo" style="width:100%;max-height:180px;margin-top:10px;display:none;background:#000;border-radius:12px" controls></video><small id="txtModeloVideo" style="font-size:10px;color:var(--yellow)"></small></div>
+<button class="btn" style="width:100%;background:#FF6B00" onclick="subirModeloVideoSinStorage()">🎬 SUBIR VIDEO</button><div id="statusModelo" style="font-size:11px;color:var(--yellow);margin-top:8px;white-space:pre-wrap"></div></div>
+<div class="grid-2"><div class="card"><h2>👦 Hombre</h2><div id="listModelosHombre"></div></div><div class="card"><h2>👧 Mujer</h2><div id="listModelosMujer"></div></div></div>
+<div class="grid-2" style="margin-top:14px"><div class="card"><h2>➕ Pedido</h2><select id="selUnifJug"></select><select id="unifTipo"><option value="Completo">Completo $50k</option><option value="Camisa">Camisa $35k</option></select><select id="unifModeloSel"><option value="">Sin modelo</option></select><div style="display:flex;gap:8px"><select id="unifTalla" style="flex:1"><option>S</option><option>M</option><option>L</option><option>XL</option><option>XS</option><option>2XL</option></select><input id="unifNumero" placeholder="#" style="flex:1" type="number"></div><input id="unifNombreEspalda" placeholder="Nombre espalda"><select id="unifEstado"><option>Pendiente</option><option>Pagado</option><option>Pedido</option><option>En camino</option><option>Entregado ✅</option></select><label style="font-size:11px">Fecha pedido</label><input id="unifFecha" type="date"><input type="hidden" id="unifValor" value="50000"><textarea id="unifObs" placeholder="Obs..." rows="2" style="width:100%;padding:12px;margin:6px 0;background:#0A0A0A;border:1px solid var(--border);color:#fff;border-radius:12px"></textarea><button class="btn" style="width:100%;background:#FF6B00;margin-top:8px" onclick="addUniforme()">👕 GUARDAR</button></div><div class="card"><h2>📋 Pedidos</h2><input id="buscarUnif" placeholder="Buscar..." style="border:2px solid #FF6B00" oninput="renderUniformes()"><div id="listUniformes" style="margin-top:12px"></div></div></div>
+</div>
+<div id="t8" class="tab"><div class="card purple"><h2 style="color:#7c4dff">⭐ HABILIDADES</h2><select id="selHabJug" onchange="renderHabilidades()"></select><input id="filtroHabJug" placeholder="Filtrar..." style="border:2px solid #7c4dff;margin-top:8px" oninput="filtrarSelHabilidades()"><div id="contadorHab" style="font-size:11px;color:var(--yellow);margin:6px 0"></div><div style="display:flex;gap:8px;margin-top:10px"><div class="kpi-item" style="flex:1"><b id="promedioHab">0.0</b><small>PROM</small></div><div class="kpi-item" style="flex:1"><b id="mejorHab">-</b><small>MEJOR</small></div><div class="kpi-item" style="flex:1"><b id="peorHab">-</b><small>A MEJORAR</small></div></div></div><div id="containerHabilidades"></div><div class="card gold"><h2 style="color:gold">📈 HISTORIAL</h2><div id="historialProgreso"></div></div></div>
+<div id="t9" class="tab"><div class="card gold"><h2 style="color:gold">🏆 RANKING</h2><select id="filtroRankingCat" onchange="renderRanking()"><option value="Todos">Todas</option><option value="pequena">Pequeña</option><option value="sub15">Sub 15</option><option value="sub17">Sub 17</option><option value="sub20">Sub 20</option><option value="mayores">Mayores</option></select></div><div id="rankingContainer"></div></div>
+<div id="t6" class="tab"><div class="card blue"><h2 style="color:var(--blue)">🏆 CATEGORÍAS</h2><div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn btn-white" style="flex:1" onclick="filtrarCat('Todos','Todos')">TODOS <span id="kpiTodos">0</span></button><button class="btn" style="flex:1;background:var(--blue);color:black" onclick="filtrarCat('Todos','Masculino')">👦 H <span id="kpiHombres">0</span></button><button class="btn" style="flex:1;background:var(--pink);color:white" onclick="filtrarCat('Todos','Femenino')">👧 M <span id="kpiMujeres">0</span></button></div><div id="filtroActivoCat" style="margin-top:10px;font-size:12px;color:var(--yellow);font-weight:800"></div></div><div id="catContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px"></div><div class="card" style="margin-top:14px"><h2 id="tituloListaCat">📋 Filtrados</h2><div id="listCategoriaFiltrada"></div></div></div>
+<div id="t2" class="tab"><div class="card"><h2>📅 Asistencia</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="fAsis" type="date" style="max-width:160px"><button class="btn" onclick="marcarTodos(true)">✅ Todos</button><button class="btn" style="background:#333" onclick="marcarTodos(false)">❌ Ninguno</button></div><div id="listAsis" style="margin-top:12px"></div></div><div class="card"><h2>📊 Historial</h2><div id="hist"></div></div></div>
+<div id="t3" class="tab"><div class="card"><h2>💰 FINANZAS - <span id="mesActualTxt"></span></h2><div class="qr-box" style="max-width:260px;margin:12px auto"><b style="color:black">NEQUI 3024404924</b><br><img src="breb.png"></div><div class="kpi"><div class="kpi-item"><b id="kpiTotal">0</b><small>TOTAL</small></div><div class="kpi-item"><b id="kpiMesPagaron">0</b><small>PAGARON</small></div><div class="kpi-item"><b id="kpiPorCobrar" style="color:var(--red)">$0</b><small>POR COBRAR</small></div><div class="kpi-item"><b id="kpiInscPagadas">0</b><small>INSC</small></div></div></div><div class="card green"><h2 style="color:var(--green)">💳 MENSUALIDAD</h2><div id="listPagos"></div></div><div class="card yellow"><h2 style="color:var(--yellow)">📝 INSCRIPCIÓN</h2><div id="listInsc"></div></div></div>
+<div id="t7" class="tab"><div class="card"><h2>📁 DOCUMENTOS</h2><div class="grid-2"><div><select id="selDocJug"></select><div class="upload-box"><b>Adress</b><input type="file" id="fileAdress"></div><div class="upload-box"><b>Cédula</b><input type="file" id="fileCedulaAcudiente"></div><div class="upload-box"><b>Tarjeta</b><input type="file" id="fileTarjeta"></div><div class="upload-box"><b>Ficha</b><input type="file" id="fileFichaD"></div><div class="upload-box"><b>Comprobante</b><input type="file" id="fileComp"></div><button class="btn" style="width:100%;background:#7c4dff" onclick="subirVariosDocumentos()">📤 SUBIR</button></div><div><h3>Del jugador</h3><div id="listaDocs"></div></div></div></div><div class="card"><h2>📁 Todos</h2><div id="listaTodosDocs"></div></div></div>
+<div id="t5" class="tab"><div class="card"><h2>🔔 SOLICITUDES</h2><div id="listaSolicitudes"></div></div></div>
+</div>
+</div>
+<div id="vistaJ" style="display:none">
+<div style="position:sticky;top:0;z-index:40;background:rgba(15,15,15,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+<b>🏐 MI PANEL</b><button class="btn" style="background:var(--text);color:#000;padding:8px 16px" onclick="salirJugador()">↩ SALIR</button>
+</div>
+<div style="padding:12px;max-width:700px;margin:0 auto">
+<div class="card" style="text-align:center"><h2>🏐 MI ESTADO</h2><div id="miEstado"></div></div>
+<div class="card orange"><h2 style="color:#FF6B00">👕 Modelos para ti</h2><div id="misModelosDisponibles"></div></div>
+<div class="card orange"><h2 style="color:#FF6B00">👕 Mi Uniforme</h2><div id="miUniforme"></div><div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px"><h3 style="font-size:13px;color:#FF6B00">➕ Pedir uniforme</h3><div style="background:#111;padding:10px;border-radius:10px;margin:8px 0"><small>Modelo:</small><br><b id="jModeloSeleccionadoTxt" style="color:#FF6B00">Ninguno - Elige arriba</b></div><select id="jUnifTipo"><option value="Completo">Completo $50k</option><option value="Camisa">Camisa $35k</option></select><div style="display:flex;gap:8px"><select id="jUnifTalla" style="flex:1"><option>S</option><option>M</option><option>L</option><option>XL</option><option>XS</option><option>2XL</option></select><input id="jUnifNumero" placeholder="#" type="number" style="flex:1"></div><input id="jUnifNombreEspalda" placeholder="Nombre espalda"><input type="hidden" id="jUnifValor" value="50000"><button class="btn" style="width:100%;background:#FF6B00;margin-top:8px" onclick="solicitarUniformeJugador()">👕 SOLICITAR</button></div></div>
+<div class="card purple" style="text-align:center"><h2 style="color:#7c4dff">📸 Mi Foto</h2><img id="miFotoPerfil" class="perfil-img" style="margin-top:12px;display:none"><p id="sinFotoTxt" style="font-size:12px;color:var(--text2)">Sin foto</p><div class="perfil-upload-box"><b>Subir</b><input type="file" id="fileFotoPerfilJug" accept="image/*"><img id="previewFotoPerfilJug" style="width:80px;height:80px;border-radius:50%;margin:10px auto;display:none;object-fit:cover"><button class="btn" style="width:100%;background:var(--purple);margin-top:8px" onclick="subirFotoPerfilJugador()">💾 GUARDAR</button></div></div>
+<div class="card" style="text-align:center"><div class="qr-box"><b style="color:black">NEQUI 3024404924</b><br><img src="breb.png"><br><button class="btn btn-green" style="width:100%;margin-top:8px" onclick="contactarEntrenador()">📲 CONTACTAR</button></div><button class="btn" style="background:#222;width:100%;margin-top:8px" onclick="salirJugador()">↩ SALIR</button></div>
+<div class="card purple"><h2 style="color:#7c4dff">⭐ Mis Habilidades</h2><div id="misHabilidades"></div></div>
+</div>
+</div>
+<div id="modalEdit"><div class="modal-box"><h2>EDITAR</h2><input id="editId" type="hidden"><input id="editNombre"><label style="font-size:11px">Fecha nac</label><input id="editFechaNac" type="date" onchange="calcEdadEdit()"><div id="editVerEdad" style="font-size:11px;color:var(--green)"></div><select id="editGenero"><option>Masculino</option><option>Femenino</option></select><select id="editPos"><option>Armador</option><option>Central</option><option>Libero</option><option>Punta</option><option>Opuesto</option></select><input id="editTel"><select id="editFormaPago"><option>Nequi</option><option>Transferencia</option></select><label style="font-size:11px;color:var(--green)">Último pago</label><input id="editFpago" type="date"><label style="font-size:11px;color:var(--blue)">Inscripción</label><input id="editFinsc" type="date"><label style="font-size:11px"><input type="checkbox" id="editInscPagada"> Insc pagada</label><div class="perfil-upload-box"><b>📸 Foto</b><input type="file" id="fileFotoEdit" accept="image/*"><img id="previewFotoEdit" style="width:70px;height:70px;border-radius:50%;margin:8px auto;display:none;object-fit:cover"></div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn" style="flex:1" onclick="guardarEdicionFIX()">GUARDAR</button><button class="btn" style="flex:1;background:#333" onclick="cerrarModal()">CANCELAR</button></div></div></div>
+<button class="wasa-float" onclick="contactarEntrenador()">💬</button>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, onValue, set, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = {apiKey:"AIzaSyDhYF6xS9Ugd578F1b9kehS4f7SpW-cE",authDomain:"imperium-72bac.firebaseapp.com",databaseURL:"https://imperium-72bac-default-rtdb.firebaseio.com",projectId:"imperium-72bac",storageBucket:"imperium-72bac.firebasestorage.app",messagingSenderId:"438175878107",appId:"1:438175878107:web:e38a78757759c72f6635fe"};
+const app=initializeApp(firebaseConfig);const db=getDatabase(app);
+let jugadores={},asistencias={},solicitudes={},configClub={mensualidad:40000,inscripcion:30000},pagosMensuales={},documentos={},habilidades={},habilidadesHistorial={},uniformes={},uniformesModelos={},filtroCat='Todos',filtroGenero='Todos',currentJugadorId=null,modeloSeleccionadoId=null;
+const SKILLS=["Recepción","Remate (Pegue)","Bloqueo","Voleo","Reflejo","Inteligencia","Saque","Acondicionamiento"];
+function getMesActual(){return new Date().getFullYear()+"-"+String(new Date().getMonth()+1).padStart(2,"0");}
+function getMesDeFecha(f){if(!f) return getMesActual();return f.substring(0,7);}
+function formatoFecha(f){if(!f) return 'Sin fecha';try{return new Date(f+'T00:00:00').toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});}catch{return f;}}
+window.abrirLogin=(t)=>{login.style.display='flex';document.getElementById('landing').style.display='none';boxE.style.display=t==='E'?'block':'none';boxJ.style.display=t==='J'?'block':'none';boxR.style.display=t==='R'?'block':'none';if(t==='J')filtrarJugadoresSelect();}
+window.cerrarLogin=()=>{login.style.display='none';document.getElementById('landing').style.display='block';}
+function hashClave(c){let h=0;for(let i=0;i<c.length;i++){h=((h<<5)-h)+c.charCodeAt(i);h|=0;}return h.toString();}
+window.toggleClave=()=>{const input=document.getElementById('clave'); if(input.type==='password'){input.type='text';}else{input.type='password';}}
+window.loginEntrenador=()=>{if(hashClave(clave.value)===hashClave('mensualidadgratis')){login.style.display='none';document.getElementById('landing').style.display='none';vistaE.style.display='block';}else alert('Clave incorrecta');}
+window.previewFile=(input,imgId)=>{const file=input.files[0]; if(!file) return;const map={'prevRAdress':'txtRAdress','prevRCedula':'txtRCedula','prevRTarjeta':'txtRTarjeta','prevRFicha':'txtRFicha'};const txt=document.getElementById(map[imgId]); if(txt) txt.innerText='✅ '+file.name;const img=document.getElementById(imgId); if(img && file.type.startsWith('image/')){const r=new FileReader(); r.onload=e=>{img.src=e.target.result;img.style.display='block';}; r.readAsDataURL(file);}}
+window.salirJugador=()=>{currentJugadorId=null;modeloSeleccionadoId=null;vistaJ.style.display='none';vistaE.style.display='none';document.getElementById('landing').style.display='block';login.style.display='none';window.scrollTo(0,0);}
+window.filtrarJugadoresSelect=()=>{const filtro=document.getElementById('filtroNombreJug')?.value.toLowerCase().trim()||'';const sel=document.getElementById('selJug');const cont=document.getElementById('contadorJug');if(!sel) return;sel.innerHTML='';let lista=Object.entries(jugadores);if(filtro!==''){lista=lista.filter(([k,v])=>v.nombre.toLowerCase().includes(filtro));}lista.sort((a,b)=>a[1].nombre.localeCompare(b[1].nombre));lista.forEach(([k,v])=>{let o=document.createElement('option');o.value=k;o.textContent=`${v.nombre} - ${getCat(v.edad).t}`;sel.appendChild(o);});if(cont) cont.innerText=filtro?`${lista.length} encontrados`:`Total: ${Object.keys(jugadores).length}`;}
+window.filtrarSelHabilidades=()=>{const filtro=document.getElementById('filtroHabJug')?.value.toLowerCase().trim()||'';const sel=document.getElementById('selHabJug');const cont=document.getElementById('contadorHab');if(!sel) return;sel.innerHTML='';let lista=Object.entries(jugadores);if(filtro!==''){lista=lista.filter(([k,v])=>v.nombre.toLowerCase().includes(filtro));}lista.sort((a,b)=>a[1].nombre.localeCompare(b[1].nombre));lista.forEach(([k,v])=>{let o=document.createElement('option');o.value=k;o.textContent=`${v.nombre}`;sel.appendChild(o);});if(cont) cont.innerText=filtro?`${lista.length}`:`${lista.length}`;renderHabilidades();}
+window.loginJugador=()=>{const id=selJug.value;const j=jugadores[id];if(!j)return alert('Selecciona');currentJugadorId=id;modeloSeleccionadoId=null;login.style.display='none';document.getElementById('landing').style.display='none';vistaE.style.display='none';vistaJ.style.display='block';const deuda=getDeudaAcumulada(id);let html=deuda.meses.length===0?`<div style="background:#fff;color:#000;padding:12px;font-weight:800;border-radius:12px">AL DIA ✅<br><small>${formatoFecha(j.fechaPago)}</small></div>`:`<div style="background:var(--red);color:#fff;padding:12px;font-weight:800;border-radius:12px">DEBE ${deuda.meses.length} MES<br>$${deuda.total.toLocaleString()}</div>`;let fotoHtml=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img" style="margin:0 auto 12px">`:`<div class="perfil-img" style="display:flex;align-items:center;justify-content:center;font-size:36px;background:#222">🏐</div>`;miEstado.innerHTML=`<div style="padding:16px;background:#000;border-radius:14px;text-align:center">${fotoHtml}<h2>${j.nombre}</h2><p style="font-size:12px;margin:8px 0">${getCat(j.edad).t} - ${j.pos}</p>${html}<div style="margin-top:10px"><button class="btn btn-white" style="width:100%" onclick="generarReciboPDF('${id}','${getMesActual()}')">📄 RECIBO</button></div></div>`;mostrarFotoPerfil();renderMiUniforme();renderModelosParaJugador();renderMisHabilidades();}
+function getCat(edad){edad=parseInt(edad);if(edad>=8&&edad<=11)return{t:'PEQUEÑA',c:'var(--blue)',id:'pequena'};if(edad>=12&&edad<=15)return{t:'SUB 15',c:'#ffab00',id:'sub15'};if(edad>=16&&edad<=17)return{t:'SUB 17',c:'#ff2d6b',id:'sub17'};if(edad>=18&&edad<=20)return{t:'SUB 20',c:'#7c4dff',id:'sub20'};return{t:'MAYORES',c:'var(--green)',id:'mayores'};}
+function calcEdad(f){if(!f)return 0;const p=f.split('-');const hoy=new Date();let edad=hoy.getFullYear()-parseInt(p[0]);const mm=hoy.getMonth()-(parseInt(p[1])-1);if(mm<0||(mm===0&&hoy.getDate()<parseInt(p[2])))edad--;return edad;}
+window.calcEdad=()=>{const f=fechaNacimiento.value;if(!f){verEdad.innerText='';return 0;}const e=calcEdad(f);verEdad.innerText=e+'a - '+getCat(e).t;return e;}
+window.calcEdadEdit=()=>{const f=editFechaNac.value;if(!f){editVerEdad.innerText='';return 0;}const e=calcEdad(f);editVerEdad.innerText=e+'a - '+getCat(e).t;return e;}
+function getMesesDesdeInscripcion(j){
+  if(!j) return [getMesActual()];
+  let inicioStr = j.fechaInscripcion || j.fechaPago || (getMesActual()+"-01");
+  if(j.fechaInscripcion && j.fechaPago){
+    if(j.fechaPago < j.fechaInscripcion){
+      inicioStr = j.fechaPago;
+    }
+  }
+  let ini=new Date(inicioStr);ini.setDate(1);
+  let hoy=new Date();hoy.setDate(1);
+  let meses=[];let cur=new Date(ini);let guard=0;
+  while(cur<=hoy && guard<120){
+    meses.push(cur.getFullYear()+"-"+String(cur.getMonth()+1).padStart(2,"0"));
+    cur.setMonth(cur.getMonth()+1);guard++;
+  }
+  return meses.length?meses:[getMesActual()];
+}
+function getDeudaAcumulada(jid){
+  const j=jugadores[jid];
+  if(!j) return {meses:[], total:0};
+  const todos=getMesesDesdeInscripcion(j);
+  let debe=[];
+  todos.forEach(m=>{if(!(pagosMensuales[m] && pagosMensuales[m][jid])) debe.push(m);});
+  return {meses:debe, total:debe.length*configClub.mensualidad};
+}
+function toBase64(f){return new Promise(r=>{const fr=new FileReader();fr.onload=e=>r(e.target.result);fr.readAsDataURL(f);});}
+function mostrarFotoPerfil(){if(!currentJugadorId) return;const j=jugadores[currentJugadorId];const img=document.getElementById('miFotoPerfil');const txt=document.getElementById('sinFotoTxt');if(j?.fotoPerfil){img.src=j.fotoPerfil;img.style.display='block';txt.style.display='none';}else{img.style.display='none';txt.style.display='block';}}
+window.subirFotoPerfilJugador=async()=>{const file=document.getElementById('fileFotoPerfilJug').files[0];if(!file) return alert('Elige foto');if(file.size>2*1024*1024) return alert('Max 2MB');const base=await toBase64(file);update(ref(db,'jugadores/'+currentJugadorId),{fotoPerfil:base});alert('✅ Foto guardada');}
+window.generarReciboPDF=(jid,mes)=>{const j=jugadores[jid];if(!j)return;const {jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFillColor(0,0,0);doc.rect(0,0,210,40,'F');doc.setTextColor(255,255,255);doc.setFontSize(20);doc.text('IMPERIUM VOLEY - RECIBO',10,20);doc.setFontSize(10);doc.text('Nequi 3024404924',10,28);doc.setTextColor(0,0,0);doc.setFontSize(12);doc.text(`Jugador: ${j.nombre}`,10,50);doc.text(`Mes: ${mes}`,10,58);doc.text(`Monto: $40.000`,10,66);doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`,10,74);doc.save(`Recibo_${j.nombre}_${mes}.pdf`);}
+window.enviarReciboPorWasa=(jid,mes)=>{const j=jugadores[jid];if(!j||!j.tel) return;let tel=j.tel.replace(/\D/g,'');if(tel.startsWith('57')) tel=tel.substring(2);if(tel.length>10) tel=tel.slice(-10);const texto=`🏐 RECIBO - ${j.nombre}%0AMes: ${mes}%0A$40.000%0ANequi: 3024404924`;window.open(`https://api.whatsapp.com/send?phone=57${tel}&text=${texto}`,'_blank');}
+window.pagarConReciboAuto=(id,mesParam)=>{const mes=mesParam||getMesActual();const hoy=new Date().toISOString().split('T')[0];set(ref(db,'pagosMensuales/'+mes+'/'+id),{jugadorId:id,nombre:jugadores[id].nombre,fecha:hoy,monto:configClub.mensualidad});update(ref(db,'jugadores/'+id),{fechaPago:hoy});setTimeout(()=>{generarReciboPDF(id,mes);setTimeout(()=>{enviarReciboPorWasa(id,mes);},800);},400);}
+window.pagar=(id)=>{pagarConReciboAuto(id,getMesActual());}
+window.pagarMesAtrasado=(id,mes)=>{pagarConReciboAuto(id,mes);}
+window.cancelarPago=(id,mes)=>{const m=mes||getMesActual();if(!pagosMensuales[m]?.[id]){alert('No tiene pago en '+m);return;}if(!confirm('Cancelar pago '+m+'?')) return;remove(ref(db,'pagosMensuales/'+m+'/'+id)).then(()=>{const mesesPagados=Object.keys(pagosMensuales).filter(k=>pagosMensuales[k]?.[id]).sort().reverse();const ultimo=mesesPagados.find(k=>k!==m);if(ultimo && pagosMensuales[ultimo]?.[id]){update(ref(db,'jugadores/'+id),{fechaPago:pagosMensuales[ultimo][id].fecha});}else{const j=jugadores[id];update(ref(db,'jugadores/'+id),{fechaPago:j.fechaInscripcion||new Date().toISOString().split('T')[0]});}});}
+window.pagarInsc=(id)=>{update(ref(db,'jugadores/'+id),{inscPagada:true});}
+window.cancelarInsc=(id)=>{if(!confirm('Cancelar?')) return;update(ref(db,'jugadores/'+id),{inscPagada:false});}
+window.exportarExcelPlantilla=()=>{const data=Object.values(jugadores).map(j=>{const id=Object.keys(jugadores).find(k=>jugadores[k].nombre===j.nombre);const deuda=getDeudaAcumulada(id);return{Nombre:j.nombre,Edad:j.edad,Categoria:getCat(j.edad).t,Genero:j.genero,Posicion:j.pos,Telefono:j.tel,UltimoPago:j.fechaPago,Deuda:deuda.total};});const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Plantilla');XLSX.writeFile(wb,`Plantilla_${getMesActual()}.xlsx`);}
+window.exportarExcelFinanzas=()=>{const mes=getMesActual();const data=Object.entries(jugadores).map(([id,j])=>{const pagado=pagosMensuales[mes]?.[id]? 'SI':'NO';const deuda=getDeudaAcumulada(id);return{Nombre:j.nombre,Estado:pagado,Debe:deuda.total,Ultimo:j.fechaPago};});const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Finanzas');XLSX.writeFile(wb,`Finanzas_${mes}.xlsx`);}
+window.enviarRecordatorioMasivo=()=>{const deudores=Object.entries(jugadores).filter(([id])=>getDeudaAcumulada(id).meses.length>0);if(!deudores.length) return alert('Todos al día!');let mensaje=`🏐 IMPERIUM - DEUDORES%0A%0A`;deudores.forEach(([id,j])=>{const d=getDeudaAcumulada(id);mensaje+=`• ${j.nombre}: $${d.total.toLocaleString()}%0A`;});window.open(`https://api.whatsapp.com/send?text=${mensaje}`,'_blank');}
+window.filtrarCat=(cat,gen)=>{filtroCat=cat;filtroGenero=gen||'Todos';render();}
+window.enviarWasa=(id)=>{const j=jugadores[id];let tel=j.tel.replace(/\D/g,'');if(tel.startsWith('57')) tel=tel.substring(2);if(tel.length>10) tel=tel.slice(-10);const deuda=getDeudaAcumulada(id);const texto=`🏐 ${j.nombre} - ${deuda.meses.length===0?'AL DIA':'DEBE $'+deuda.total.toLocaleString()}%0ANequi: 3024404924`;window.open(`https://api.whatsapp.com/send?phone=57${tel}&text=${texto}`,'_blank');}
+window.addJugador=async()=>{const fp=fpago.value||new Date().toISOString().split('T')[0];const fi=finsc.value||fp;if(!nombre.value||!tel.value||!fechaNacimiento.value)return alert('Falta datos');const edad=calcEdad(fechaNacimiento.value);const cat=getCat(edad);let fotoPerfil=null;const fileFoto=document.getElementById('fileFotoNuevo').files[0];if(fileFoto){fotoPerfil=await toBase64(fileFoto);}const r=push(ref(db,'jugadores'),{nombre:nombre.value,edad,fechaNacimiento:fechaNacimiento.value,genero:genero.value,pos:pos.value,tel:tel.value,formaPago:formaPago.value,fechaPago:fp,fechaInscripcion:fi,inscPagada:document.getElementById('inscPagadaCheck').checked,categoria:cat.id,fotoPerfil});const mesPago=getMesDeFecha(fp);set(ref(db,'pagosMensuales/'+mesPago+'/'+r.key),{jugadorId:r.key,nombre:nombre.value,fecha:fp,monto:configClub.mensualidad});nombre.value='';tel.value='';fechaNacimiento.value='';}
+window.enviarSolicitud=async()=>{if(!rNombre.value||!rFechaNac.value||!rTel.value)return alert('Falta datos');if(!fileRAdress.files[0]||!fileRCedulaAcudiente.files[0]||!fileRTarjeta.files[0]||!fileRFicha.files[0])return alert('Sube 4 docs');const edad=calcEdad(rFechaNac.value);const a=await toBase64(fileRAdress.files[0]);const c=await toBase64(fileRCedulaAcudiente.files[0]);const t=await toBase64(fileRTarjeta.files[0]);const f=await toBase64(fileRFicha.files[0]);await push(ref(db,'solicitudes'),{nombre:rNombre.value,fechaNacimiento:rFechaNac.value,edad,genero:rGenero.value,pos:rPos.value,tel:rTel.value,categoria:getCat(edad).id,fechaSolicitud:new Date().toISOString().split('T')[0],docs:{adress:{nombreArchivo:fileRAdress.files[0].name,dataUrl:a},cedulaAcudiente:{nombreArchivo:fileRCedulaAcudiente.files[0].name,dataUrl:c},tarjetaDeportista:{nombreArchivo:fileRTarjeta.files[0].name,dataUrl:t},ficha:{nombreArchivo:fileRFicha.files[0].name,dataUrl:f}}});alert('✅ Enviada');rNombre.value='';rTel.value='';rFechaNac.value='';}
+window.aceptarSolicitud=async(id)=>{const s=solicitudes[id];if(!confirm('Aceptar '+s.nombre+'?'))return;const hoy=new Date().toISOString().split('T')[0];const r=push(ref(db,'jugadores'),{nombre:s.nombre,edad:s.edad,fechaNacimiento:s.fechaNacimiento,genero:s.genero,pos:s.pos,tel:s.tel,formaPago:'Nequi',fechaPago:hoy,fechaInscripcion:hoy,inscPagada:true,categoria:s.categoria});const mesPago=getMesDeFecha(hoy);set(ref(db,'pagosMensuales/'+mesPago+'/'+r.key),{jugadorId:r.key,nombre:s.nombre,fecha:hoy,monto:configClub.mensualidad});remove(ref(db,'solicitudes/'+id));}
+window.rechazarSolicitud=(id)=>{if(confirm('Rechazar?'))remove(ref(db,'solicitudes/'+id));}
+window.delJugador=(id)=>{if(!confirm('Borrar '+jugadores[id].nombre+'?'))return;remove(ref(db,'jugadores/'+id));Object.keys(pagosMensuales).forEach(m=>{if(pagosMensuales[m]?.[id]) remove(ref(db,'pagosMensuales/'+m+'/'+id));});}
+
+// FIX UNIFORMES - Manejo de PERMISSION_DENIED y tamaño
+window.subirModeloVideoSinStorage=async()=>{
+  const file=document.getElementById('fileModeloVideo').files[0];
+  if(!file) return alert('Elige video');
+  if(file.size>3*1024*1024){
+    return alert('Video muy pesado para Firebase ('+(file.size/1024/1024).toFixed(1)+'MB). Graba en 480p, 7 seg, max 3MB. Tu video actual es muy grande, reenvialo por WhatsApp en calidad baja.');
+  }
+  const genero=document.getElementById('modeloGenero').value;
+  const tipo=document.getElementById('modeloTipo').value;
+  const nombre=document.getElementById('modeloNombre').value||'Modelo '+tipo;
+  const valor=tipo==='Completo'?50000:35000;
+  const status=document.getElementById('statusModelo');
+  try{
+    status.innerText='⏳ Guardando... esto puede tardar 15-20 seg, no cierres';
+    status.style.color='var(--yellow)';
+    const base64=await toBase64(file);
+    await push(ref(db,'uniformesModelos'),{genero,tipo,nombre,valor,videoUrl:base64,fecha:new Date().toISOString().split('T')[0],fechaCreacion:new Date().toISOString()});
+    status.innerText='✅ Guardado correctamente';
+    status.style.color='var(--green)';
+    document.getElementById('fileModeloVideo').value='';document.getElementById('modeloNombre').value='';document.getElementById('previewModeloVideo').style.display='none';document.getElementById('txtModeloVideo').innerText='';
+    setTimeout(()=>{status.innerText='';},3000);
+  }catch(e){
+    console.error(e);
+    status.style.color='var(--red)';
+    if(e.code==='PERMISSION_DENIED' || (e.message && e.message.includes('PERMISSION_DENIED'))){
+      status.innerText='❌ PERMISSION_DENIED: Ve a Firebase Console > Realtime Database > Rules y cambia a:\n{\n  "rules": {\n    ".read": true,\n    ".write": true\n  }\n}\nLuego dale Publicar y vuelve a intentar.';
+      alert('PERMISSION_DENIED: Tienes que cambiar las reglas en Firebase Console. Ve a Realtime Database > Rules > pon .read:true .write:true > Publicar');
+    }else if(e.message && e.message.toLowerCase().includes('size')){
+      status.innerText='❌ Video muy grande para Firebase. Usa max 3MB';
+    }else{
+      status.innerText='❌ Error: '+e.message;
+    }
+  }
+};
+
+window.borrarModeloUniforme=(id)=>{if(!confirm('¿Borrar modelo?')) return;remove(ref(db,'uniformesModelos/'+id));}
+window.seleccionarModeloParaPedido=(id)=>{
+  const m=uniformesModelos[id];if(!m) return;
+  modeloSeleccionadoId=id;
+  document.getElementById('jModeloSeleccionadoTxt').innerText=`${m.nombre} - $${m.valor.toLocaleString()}`;
+  document.querySelectorAll('.modelo-card').forEach(c=>c.classList.remove('modelo-selected'));
+  const card=document.getElementById('modelo-card-'+id);if(card) card.classList.add('modelo-selected');
+};
+window.seleccionarModeloParaPedidoEntrenador=(id)=>{
+  const m=uniformesModelos[id];if(!m) return;
+  const sel=document.getElementById('unifModeloSel');if(sel) sel.value=id;
+};
+function renderModelosUniformes(){
+  const contH=document.getElementById('listModelosHombre');
+  const contM=document.getElementById('listModelosMujer');
+  const selModelo=document.getElementById('unifModeloSel');
+  if(selModelo){selModelo.innerHTML='<option value="">Sin modelo</option>';}
+  const listaH=Object.entries(uniformesModelos).filter(([k,v])=>v.genero==='Masculino');
+  const listaM=Object.entries(uniformesModelos).filter(([k,v])=>v.genero==='Femenino');
+  if(contH){
+    contH.innerHTML='';
+    if(!listaH.length) contH.innerHTML='<p style="opacity:.5;padding:8px">No hay modelos</p>';
+    else listaH.forEach(([id,m])=>{
+      contH.innerHTML+=`<div class="video-card"><video src="${m.videoUrl}" controls preload="metadata"></video><div class="video-info"><b>${m.nombre}</b><br><small>${m.tipo} $${parseInt(m.valor).toLocaleString()}</small><div style="display:flex;gap:6px;margin-top:6px"><button class="btn btn-green" style="flex:1" onclick="seleccionarModeloParaPedidoEntrenador('${id}')">USAR</button><button class="btn" style="background:#333;flex:1" onclick="borrarModeloUniforme('${id}')">X</button></div></div></div>`;
+      if(selModelo){const o=document.createElement('option');o.value=id;o.textContent=`👦 ${m.nombre}`;selModelo.appendChild(o);}
+    });
+  }
+  if(contM){
+    contM.innerHTML='';
+    if(!listaM.length) contM.innerHTML='<p style="opacity:.5;padding:8px">No hay modelos</p>';
+    else listaM.forEach(([id,m])=>{
+      contM.innerHTML+=`<div class="video-card"><video src="${m.videoUrl}" controls preload="metadata"></video><div class="video-info"><b>${m.nombre}</b><br><small>${m.tipo} $${parseInt(m.valor).toLocaleString()}</small><div style="display:flex;gap:6px;margin-top:6px"><button class="btn btn-green" style="flex:1" onclick="seleccionarModeloParaPedidoEntrenador('${id}')">USAR</button><button class="btn" style="background:#333;flex:1" onclick="borrarModeloUniforme('${id}')">X</button></div></div></div>`;
+      if(selModelo){const o=document.createElement('option');o.value=id;o.textContent=`👧 ${m.nombre}`;selModelo.appendChild(o);}
+    });
+  }
+}
+function renderModelosParaJugador(){
+  if(!currentJugadorId) return;
+  const cont=document.getElementById('misModelosDisponibles');if(!cont) return;
+  const jugador=jugadores[currentJugadorId];if(!jugador){cont.innerHTML='';return;}
+  const generoJugador=jugador.genero;
+  let lista=Object.entries(uniformesModelos).filter(([k,v])=>v.genero===generoJugador);
+  if(!lista.length){cont.innerHTML=`<p style="opacity:.5;padding:8px">No hay modelos para ${generoJugador}</p>`;return;}
+  cont.innerHTML='';
+  lista.forEach(([id,m])=>{
+    cont.innerHTML+=`<div class="video-card modelo-card" id="modelo-card-${id}"><video src="${m.videoUrl}" controls preload="metadata"></video><div class="video-info"><b>${m.nombre}</b> - $${parseInt(m.valor).toLocaleString()}<button class="btn" style="width:100%;background:#FF6B00;margin-top:6px" onclick="seleccionarModeloParaPedido('${id}')">ELEGIR</button></div></div>`;
+  });
+}
+window.addUniforme=()=>{
+  const jid=document.getElementById('selUnifJug').value;if(!jid) return alert('Elige jugador');
+  const tipo=document.getElementById('unifTipo').value;
+  const talla=document.getElementById('unifTalla').value;
+  const numero=document.getElementById('unifNumero').value||'';
+  const nombreEsp=document.getElementById('unifNombreEspalda').value||jugadores[jid].nombre;
+  const estado=document.getElementById('unifEstado').value;
+  const fecha=document.getElementById('unifFecha').value||new Date().toISOString().split('T')[0];
+  const valor=tipo==='Completo'?50000:35000;
+  const modeloId=document.getElementById('unifModeloSel').value||'';
+  const modeloNombre=modeloId? (uniformesModelos[modeloId]?.nombre||'') : '';
+  const obs=document.getElementById('unifObs').value||'';
+  push(ref(db,'uniformes'),{jugadorId:jid,jugadorNombre:jugadores[jid].nombre,tipo,talla,numero,nombreEspalda:nombreEsp,estado,fecha,valor,modeloId,modeloNombre,obs,fechaCreacion:new Date().toISOString()});
+  alert('✅ Pedido guardado');
+};
+window.solicitarUniformeJugador=()=>{
+  if(!currentJugadorId) return alert('Error');
+  if(!modeloSeleccionadoId) return alert('Elige un modelo arriba');
+  const modelo=uniformesModelos[modeloSeleccionadoId];
+  if(!modelo) return alert('Modelo no existe');
+  const talla=document.getElementById('jUnifTalla').value;
+  const numero=document.getElementById('jUnifNumero').value||'';
+  const nombreEsp=document.getElementById('jUnifNombreEspalda').value||jugadores[currentJugadorId].nombre;
+  const valor=modelo.valor;
+  const fecha=new Date().toISOString().split('T')[0];
+  push(ref(db,'uniformes'),{jugadorId:currentJugadorId,jugadorNombre:jugadores[currentJugadorId].nombre,tipo:modelo.tipo,talla,numero,nombreEspalda:nombreEsp,estado:'Pendiente',fecha,valor,modeloId:modeloSeleccionadoId,modeloNombre:modelo.nombre,obs:'Pedido jugador',fechaCreacion:new Date().toISOString(),origen:'jugador',genero:modelo.genero});
+  alert('✅ Pedido enviado: '+modelo.nombre);
+  modeloSeleccionadoId=null;document.getElementById('jModeloSeleccionadoTxt').innerText='Ninguno';document.getElementById('jUnifNumero').value='';document.getElementById('jUnifNombreEspalda').value='';
+};
+window.delUniforme=(id)=>{if(!confirm('Borrar pedido?')) return;remove(ref(db,'uniformes/'+id));}
+window.cambiarEstadoUnif=(id,nuevoEstado)=>{update(ref(db,'uniformes/'+id),{estado:nuevoEstado});}
+window.pagarUniforme=(id)=>{const u=uniformes[id];if(!u) return;const hoy=new Date().toISOString().split('T')[0];update(ref(db,'uniformes/'+id),{estado:'Pagado',fechaPago:hoy});generarReciboUniforme(id);enviarWasaUniforme(id);}
+window.generarReciboUniforme=(id)=>{const u=uniformes[id];if(!u) return;const {jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFillColor(255,107,0);doc.rect(0,0,210,35,'F');doc.setTextColor(255,255,255);doc.setFontSize(18);doc.text('RECIBO UNIFORME',10,20);doc.setTextColor(0,0,0);doc.setFontSize(12);doc.text(`Jugador: ${u.jugadorNombre}`,10,50);doc.text(`Tipo: ${u.tipo} - $${u.valor.toLocaleString()}`,10,58);doc.text(`Talla: ${u.talla} - #${u.numero}`,10,66);doc.text(`Nombre: ${u.nombreEspalda}`,10,74);doc.text(`Estado: ${u.estado}`,10,82);doc.text(`Fecha: ${u.fecha}`,10,90);doc.save(`Uniforme_${u.jugadorNombre}.pdf`);}
+window.enviarWasaUniforme=(id)=>{const u=uniformes[id];if(!u) return;const j=jugadores[u.jugadorId];if(!j||!j.tel) return alert('Sin teléfono');let tel=j.tel.replace(/\D/g,'');if(tel.startsWith('57')) tel=tel.substring(2);if(tel.length>10) tel=tel.slice(-10);const texto=`👕 UNIFORME - ${u.tipo} $${u.valor.toLocaleString()}%0A${u.jugadorNombre}%0ATalla: ${u.talla} #${u.numero}%0ANequi: 3024404924`;window.open(`https://api.whatsapp.com/send?phone=57${tel}&text=${texto}`,'_blank');}
+function renderUniformes(){const cont=document.getElementById('listUniformes');if(!cont) return;const filtro=document.getElementById('buscarUnif')?.value.toLowerCase().trim()||'';let lista=Object.entries(uniformes);if(filtro) lista=lista.filter(([k,v])=>v.jugadorNombre.toLowerCase().includes(filtro));lista.sort((a,b)=>new Date(b[1].fechaCreacion)-new Date(a[1].fechaCreacion));const total=lista.length;const pend=lista.filter(([k,v])=>!v.estado.includes('Entregado')).length;const ent=lista.filter(([k,v])=>v.estado.includes('Entregado')).length;const dinero=lista.filter(([k,v])=>v.estado.includes('Pagado')||v.estado.includes('Entregado')||v.estado.includes('Pedido')).reduce((acc,[k,v])=>acc+(parseInt(v.valor)||0),0);if(document.getElementById('kpiUnifTotal')) kpiUnifTotal.innerText=total;if(document.getElementById('kpiUnifPend')) kpiUnifPend.innerText=pend;if(document.getElementById('kpiUnifEnt')) kpiUnifEnt.innerText=ent;if(document.getElementById('kpiUnifDinero')) kpiUnifDinero.innerText='$'+dinero.toLocaleString();cont.innerHTML='';if(!lista.length){cont.innerHTML='<p style="opacity:.5;padding:8px">No hay pedidos</p>';return;}lista.forEach(([id,u])=>{const j=jugadores[u.jugadorId];const foto=j?.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">👕</div>`;const colorEstado=u.estado.includes('Entregado')?'var(--green)':u.estado.includes('Pendiente')?'var(--red)':'var(--yellow)';cont.innerHTML+=`<div style="border:1px solid var(--border);padding:10px;margin:8px 0;border-radius:12px;background:#000"><div style="display:flex;gap:8px;align-items:center">${foto}<div><b>${u.jugadorNombre}</b><br><small style="color:${colorEstado};font-weight:800">${u.estado}</small><br><small>${u.tipo} $${parseInt(u.valor).toLocaleString()} ${u.modeloNombre?'- '+u.modeloNombre:''}</small></div></div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn" style="flex:1;background:${colorEstado}" onclick="cambiarEstadoUnif('${id}',prompt('Estado:','${u.estado}')||'${u.estado}')">ESTADO</button><button class="btn btn-green" style="flex:1" onclick="pagarUniforme('${id}')">PAGAR</button><button class="btn btn-white" style="flex:1" onclick="generarReciboUniforme('${id}')">RECIBO</button><button class="btn" style="background:#333" onclick="delUniforme('${id}')">X</button></div></div>`;});}
+function renderMiUniforme(){if(!currentJugadorId) return;const cont=document.getElementById('miUniforme');if(!cont) return;const lista=Object.entries(uniformes).filter(([k,v])=>v.jugadorId===currentJugadorId);if(!lista.length){cont.innerHTML='<p style="opacity:.5">Sin pedidos. Elige modelo arriba.</p>';return;}cont.innerHTML='';lista.forEach(([id,u])=>{const color=u.estado.includes('Entregado')?'var(--green)':'var(--red)';cont.innerHTML+=`<div style="border:1px solid var(--border);padding:10px;margin:6px 0;border-radius:12px;background:#000"><b>${u.tipo} $${parseInt(u.valor).toLocaleString()}</b><br><small>${u.modeloNombre||''} - Talla ${u.talla} #${u.numero}</small><br><small style="color:${color};font-weight:800">${u.estado}</small></div>`;});}
+window.renderHabilidades=()=>{const jid=document.getElementById('selHabJug')?.value;const cont=document.getElementById('containerHabilidades');if(!jid||!cont){if(cont) cont.innerHTML='<p style="opacity:.5;padding:8px">Selecciona jugador</p>';return;}const j=jugadores[jid];if(!j){cont.innerHTML='';return;}const hab=habilidades[jid]||{};let total=0,cnt=0,mejor={v:0,n:'-'},peor={v:11,n:'-'};SKILLS.forEach(s=>{if(hab[s]){total+=hab[s];cnt++; if(hab[s]>mejor.v) mejor={v:hab[s],n:s}; if(hab[s]<peor.v) peor={v:hab[s],n:s};}});const prom=cnt? (total/cnt).toFixed(1):'0.0';document.getElementById('promedioHab').innerText=prom;document.getElementById('mejorHab').innerText=mejor.n!=='-'?`${mejor.n} (${mejor.v})`:'-';document.getElementById('peorHab').innerText=peor.n!=='-'?`${peor.n} (${peor.v})`:'-';let html=`<div class="card" style="display:flex;gap:12px;align-items:center"><div>${j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">🏐</div>`}</div><div><h3>${j.nombre}</h3><small>${getCat(j.edad).t}</small></div><div style="margin-left:auto"><button class="btn btn-white" style="padding:6px 10px" onclick="generarReciboPDF('${jid}','${getMesActual()}')">RECIBO</button></div></div>`;SKILLS.forEach(skill=>{const val=hab[skill]||0;let boxes='';for(let i=1;i<=10;i++){let cls='';if(i<=val){if(val>=8) cls='filled';else if(val>=5) cls='filled mid';else cls='filled low';}boxes+=`<div class="skill-box ${cls}" onclick="setHabilidad('${jid}','${skill}',${i})"></div>`;}html+=`<div class="skill-row"><div class="skill-name"><b>${skill}</b><b style="color:${val>=8?'var(--green)':val>=5?'var(--yellow)':'var(--red)'}">${val}/10</b></div><div class="skill-boxes">${boxes}</div><div class="skill-bar"><div class="skill-bar-fill" style="width:${val*10}%"></div></div></div>`;});cont.innerHTML=html;renderHistorialProgreso(jid);}
+window.setHabilidad=(jid,skill,val)=>{set(ref(db,'habilidades/'+jid+'/'+skill),val);push(ref(db,'habilidadesHistorial/'+jid+'/'+skill),{valor:val,fecha:new Date().toISOString()});}
+function renderHistorialProgreso(jid){const cont=document.getElementById('historialProgreso');if(!cont) return;const hist=habilidadesHistorial[jid]||{};if(!Object.keys(hist).length){cont.innerHTML='<p style="color:var(--text3)">Sin historial</p>';return;}let html='';Object.entries(hist).forEach(([skill,registros])=>{const vals=Object.values(registros).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));if(vals.length<2) return;const primero=vals[0].valor, ultimo=vals[vals.length-1].valor;const mejora=ultimo-primero;const color=mejora>0?'var(--green)':mejora<0?'var(--red)':'var(--yellow)';html+=`<div style="background:var(--bg);border:1px solid var(--border);padding:8px;border-radius:10px;margin:6px 0"><b>${skill}</b>: ${primero} → ${ultimo} <span style="color:${color};font-weight:800">${mejora>0?'+'+mejora:mejora}</span></div>`;});cont.innerHTML=html||'<p style="color:var(--text3)">Califica más veces</p>';}
+function renderRanking(){const filtro=document.getElementById('filtroRankingCat')?.value||'Todos';const cont=document.getElementById('rankingContainer');if(!cont) return;let lista=Object.entries(jugadores).map(([id,j])=>{const hab=habilidades[id]||{};let total=0,c=0;Object.values(hab).forEach(v=>{total+=v;c++;});return{id,nombre:j.nombre,categoria:j.categoria||getCat(j.edad).id,prom:c? total/c : 0};}).filter(j=>j.prom>0);if(filtro!=='Todos') lista=lista.filter(j=>j.categoria===filtro);lista.sort((a,b)=>b.prom-a.prom);if(!lista.length){cont.innerHTML='<p style="color:var(--text3);padding:8px">Sin calificaciones</p>';return;}let html='';if(lista.length>=1){html+=`<div class="podium">`;if(lista[1]) html+=`<div class="podium-item silver"><b>${lista[1].nombre}</b><br>${lista[1].prom.toFixed(1)}</div>`;if(lista[0]) html+=`<div class="podium-item gold"><b>${lista[0].nombre}</b><br>${lista[0].prom.toFixed(1)}</div>`;if(lista[2]) html+=`<div class="podium-item bronze"><b>${lista[2].nombre}</b><br>${lista[2].prom.toFixed(1)}</div>`;html+=`</div>`;}cont.innerHTML=html;}
+function renderMisHabilidades(){if(!currentJugadorId) return;const c=document.getElementById('misHabilidades');if(!c) return;const hab=habilidades[currentJugadorId]||{};let html='';let total=0,cnt=0;SKILLS.forEach(s=>{const v=hab[s]||0;if(v){total+=v;cnt++;}let boxes='';for(let i=1;i<=10;i++){let cls='';if(i<=v){if(v>=8) cls='filled';else if(v>=5) cls='filled mid';else cls='filled low';}boxes+=`<div class="skill-box ${cls}" style="cursor:default"></div>`;}html+=`<div class="skill-row"><div class="skill-name"><b>${s}</b><b>${v}/10</b></div><div class="skill-boxes">${boxes}</div></div>`;});const prom=cnt? (total/cnt).toFixed(1):'0.0';c.innerHTML=`<div class="kpi-item" style="margin-bottom:8px"><b style="color:#7c4dff;font-size:22px">${prom}/10</b><small>PROMEDIO</small></div>`+ (cnt? html : '<p style="color:var(--text3)">Sin calificar</p>');}
+window.subirVariosDocumentos=async()=>{const jid=selDocJug.value;if(!jid)return alert('Elige jugador');const lista=[{file:fileAdress.files[0],tipo:'Adress'},{file:fileCedulaAcudiente.files[0],tipo:'Cédula'},{file:fileTarjeta.files[0],tipo:'Tarjeta'},{file:fileFichaD.files[0],tipo:'Ficha'},{file:fileComp.files[0],tipo:'Comprobante'}].filter(a=>a.file);if(!lista.length)return alert('Elige docs');for(const it of lista){const b=await toBase64(it.file);push(ref(db,'documentos/'+jid),{jugadorNombre:jugadores[jid].nombre,tipo:it.tipo,nombreArchivo:it.file.name,dataUrl:b});}alert('✅ Subidos');}
+window.subirMisDocumentosJugador=async()=>{const jid=currentJugadorId;if(!jid)return alert('No jugador');const lista=[{file:fileJAdress.files[0],tipo:'Adress'},{file:fileJCedulaAcudiente.files[0],tipo:'Cédula'},{file:fileJTarjeta.files[0],tipo:'Tarjeta'},{file:fileJFicha.files[0],tipo:'Ficha'},{file:fileJComp.files[0],tipo:'Comprobante'}].filter(a=>a.file);if(!lista.length)return alert('Elige docs');for(const it of lista){const b=await toBase64(it.file);push(ref(db,'documentos/'+jid),{jugadorNombre:jugadores[jid].nombre,tipo:it.tipo,nombreArchivo:it.file.name,dataUrl:b});}alert('✅ Subidos');}
+function renderDocs(){const jid=selDocJug.value;const c=listaDocs;if(c){c.innerHTML='';if(!jid||!documentos[jid]){c.innerHTML='<p style="color:var(--text3)">Sin docs</p>';}else{Object.entries(documentos[jid]).forEach(([id,d])=>{c.innerHTML+=`<div class="doc-item"><div><b>${d.tipo}</b><br><small>${d.nombreArchivo}</small></div><div><a href="${d.dataUrl}" download="${d.nombreArchivo}" class="btn" style="padding:6px 10px;background:var(--green);color:#000">📥</a> <button class="btn" style="background:#333" onclick="borrarDoc('${jid}','${id}')">X</button></div></div>`;});}}const todos=listaTodosDocs;todos.innerHTML='';Object.entries(documentos).forEach(([jid,docs])=>{Object.entries(docs).forEach(([did,d])=>{todos.innerHTML+=`<div class="doc-item"><div><b>${d.jugadorNombre}</b> - ${d.tipo}</div></div>`;});});}
+window.borrarDoc=(jid,did)=>{if(confirm('Borrar?'))remove(ref(db,'documentos/'+jid+'/'+did));}
+window.editarJugador=(id)=>{const j=jugadores[id];editId.value=id;editNombre.value=j.nombre;editFechaNac.value=j.fechaNacimiento;editGenero.value=j.genero;editPos.value=j.pos;editTel.value=j.tel;editFormaPago.value=j.formaPago;editFpago.value=j.fechaPago;editFinsc.value=j.fechaInscripcion||'';editInscPagada.checked=j.inscPagada?true:false;calcEdadEdit();document.getElementById('modalEdit').style.display='flex';}
+window.cerrarModal=()=>{document.getElementById('modalEdit').style.display='none';}
+window.guardarEdicionFIX=async()=>{
+  var id=editId.value;
+  var edad=calcEdad(editFechaNac.value);
+  var nuevaFechaPago=editFpago.value;
+  var nuevaFechaInsc=editFinsc.value;
+  var viejoJugador=jugadores[id];
+  if(!viejoJugador) return;
+  if(nuevaFechaInsc && nuevaFechaPago && nuevaFechaInsc > nuevaFechaPago){
+    nuevaFechaInsc = nuevaFechaPago;
+  }
+  var updateData={
+    nombre:editNombre.value,
+    fechaNacimiento:editFechaNac.value,
+    edad:edad,
+    genero:editGenero.value,
+    pos:editPos.value,
+    tel:editTel.value,
+    formaPago:editFormaPago.value,
+    fechaPago:nuevaFechaPago,
+    fechaInscripcion:nuevaFechaInsc||viejoJugador.fechaInscripcion||nuevaFechaPago,
+    categoria:getCat(edad).id,
+    inscPagada:editInscPagada.checked
+  };
+  var fileFoto=document.getElementById('fileFotoEdit').files[0];
+  if(fileFoto){
+    var base=await toBase64(fileFoto);
+    updateData.fotoPerfil=base;
+  }
+  var mesNuevo=getMesDeFecha(nuevaFechaPago);
+  if(!pagosMensuales[mesNuevo] || !pagosMensuales[mesNuevo][id]){
+    await set(ref(db,'pagosMensuales/'+mesNuevo+'/'+id),{
+      jugadorId:id,
+      nombre:editNombre.value,
+      fecha:nuevaFechaPago,
+      monto:configClub.mensualidad
+    });
+  }
+  await update(ref(db,'jugadores/'+id),updateData);
+  alert('✅ Guardado - deuda corregida');
+  cerrarModal();
+}
+function render(){
+const b=document.getElementById('buscar')?.value.toLowerCase().trim()||'';
+const cont=document.getElementById('list');
+if(!cont)return;
+cont.innerHTML='';
+let entries=Object.entries(jugadores);
+if(b!==''){entries=entries.filter(([k,v])=>v.nombre.toLowerCase().includes(b));}
+if(filtroCat!=='Todos')entries=entries.filter(([k,v])=>getCat(v.edad).id===filtroCat);
+if(filtroGenero!=='Todos')entries=entries.filter(([k,v])=>v.genero===filtroGenero);
+const mes=getMesActual();const pagadosMes=pagosMensuales[mes]||{};const tot=Object.keys(jugadores).length;const pag=Object.keys(pagadosMes).length;
+let totalAcum=0;let inscPagadas=0;let totalH=0,totalM=0;
+Object.keys(jugadores).forEach(jid=>{totalAcum+=getDeudaAcumulada(jid).total;if(jugadores[jid].inscPagada)inscPagadas++;if(jugadores[jid].genero==='Masculino')totalH++;else if(jugadores[jid].genero==='Femenino')totalM++;});
+if(kpiTotal)kpiTotal.innerText=tot;
+if(document.getElementById('kpiTodos'))kpiTodos.innerText=tot;
+if(document.getElementById('kpiHombres'))kpiHombres.innerText=totalH;
+if(document.getElementById('kpiMujeres'))kpiMujeres.innerText=totalM;
+if(kpiMesPagaron)kpiMesPagaron.innerText=pag;
+if(kpiPorCobrar)kpiPorCobrar.innerText='$'+totalAcum.toLocaleString();
+if(kpiInscPagadas)kpiInscPagadas.innerText=inscPagadas+'/'+tot;
+const resDiv=document.getElementById('resultadoBusqueda');
+if(resDiv){if(b!=='') resDiv.innerText=`${entries.length} resultados`; else resDiv.innerText=`Total: ${tot}`;}
+const contPagos=listPagos;const contInsc=listInsc;if(contPagos)contPagos.innerHTML='';if(contInsc)contInsc.innerHTML='';
+entries.forEach(([id,j])=>{const deuda=getDeudaAcumulada(id);const cat=getCat(j.edad);const pagoActual=pagosMensuales[mes]?.[id];const hab=habilidades[id]||{};let promHab=0,cntHab=0;Object.values(hab).forEach(v=>{promHab+=v;cntHab++;});promHab=cntHab? (promHab/cntHab).toFixed(1):'-';let fotoMini=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">🏐</div>`;let estadoHtml;if(deuda.meses.length===0){estadoHtml=`<div style="background:#fff;color:#000;padding:8px;border-radius:10px"><b>AL DIA ✅ ⭐${promHab}</b><br><small>${formatoFecha(j.fechaPago)}</small></div>`;}else{estadoHtml=`<div style="background:var(--red);color:#fff;padding:8px;border-radius:10px"><b>DEBE ${deuda.meses.length} MES ⭐${promHab}</b><br><small>$${deuda.total.toLocaleString()}</small><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">`+deuda.meses.map(m=>`<button class="btn" style="padding:6px 10px;background:var(--green);color:#000" onclick="pagarMesAtrasado('${id}','${m}')">PAGAR ${m}</button>`).join('')+`</div></div>`;}let cancelarHtml='';if(pagoActual){cancelarHtml+=`<button class="btn" style="background:#ff1744;color:white;margin-top:6px;width:100%" onclick="cancelarPago('${id}','${mes}')">❌ CANCELAR ${mes}</button>`;}let wasaBtn=`<button class="btn btn-green" style="width:100%;margin-top:6px" onclick="enviarWasa('${id}')">📲 WASA</button>`;const html=`<div style="border:1px solid var(--border);padding:12px;margin:8px 0;border-radius:14px;background:#000"><div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">${fotoMini}<div><b>${j.nombre}</b><br><span style="color:${cat.c};font-size:11px">[${cat.t} ${j.genero==='Masculino'?'👦':'👧'}] ⭐${promHab}</span></div></div><small>${j.pos} • ${formatoFecha(j.fechaPago)}</small><div style="margin-top:8px">${estadoHtml}</div>${cancelarHtml}${wasaBtn}<div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-white" style="flex:1" onclick="editarJugador('${id}')">EDITAR</button><button class="btn" style="flex:1;background:#7c4dff" onclick="openTab('t8',document.querySelectorAll('.menu button')[2]);setTimeout(()=>{document.getElementById('selHabJug').value='${id}';renderHabilidades();},200)">⭐</button><button class="btn" style="flex:1" onclick="pagar('${id}')">PAGAR</button><button class="btn" style="background:#333" onclick="delJugador('${id}')">X</button></div></div>`;cont.innerHTML+=html;if(contPagos)contPagos.innerHTML+=html;let inscHtml=j.inscPagada?`<span class="badge al-dia">PAGADA ✅</span> <button class="btn" style="padding:4px 8px;background:#ff1744;color:white;margin-left:6px" onclick="cancelarInsc('${id}')">❌</button>`:`<span class="badge debe">DEBE</span> <button class="btn" style="padding:4px 8px;background:var(--yellow);color:black" onclick="pagarInsc('${id}')">PAGAR</button>`;const htmlInsc=`<div style="border:1px solid var(--border);padding:10px;margin:6px 0;border-radius:12px;background:#000"><div style="display:flex;gap:6px;align-items:center">${fotoMini}<b>${j.nombre}</b> [${cat.t}]</div><div style="margin-top:6px">${inscHtml}</div></div>`;if(contInsc)contInsc.innerHTML+=htmlInsc;});renderCat();renderCatFiltrada();renderDocs();renderHist();renderSolic();renderRanking();renderUniformes();renderModelosUniformes();}
+function renderCat(){const cats={pequena:{M:[],F:[]},sub15:{M:[],F:[]},sub17:{M:[],F:[]},sub20:{M:[],F:[]}};Object.values(jugadores).forEach(j=>{const id=getCat(j.edad).id;if(!cats[id])return;if(j.genero==='Masculino')cats[id].M.push(j); else cats[id].F.push(j);});const cont=document.getElementById('catContainer');if(!cont)return;cont.innerHTML='';Object.keys(cats).forEach(k=>{const color={pequena:'var(--blue)',sub15:'#ffab00',sub17:'#ff2d6b',sub20:'#7c4dff'}[k];cont.innerHTML+=`<div style="background:var(--card);border:${filtroCat===k?'2px solid var(--yellow)':'1px solid var(--border)'};border-left:6px solid ${color};padding:12px;border-radius:14px"><h3>${k.toUpperCase()} <span style="background:${color};color:black;padding:2px 8px;border-radius:10px;font-size:11px">${cats[k].M.length+cats[k].F.length}</span></h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><div style="background:${filtroCat===k&&filtroGenero==='Masculino'?'var(--blue)':'#000'};border:1px solid var(--blue);padding:8px;border-radius:10px;cursor:pointer" onclick="filtrarCat('${k}','Masculino')"><b>👦 H</b><br><b style="font-size:18px">${cats[k].M.length}</b></div><div style="background:${filtroCat===k&&filtroGenero==='Femenino'?'var(--pink)':'#000'};border:1px solid var(--pink);padding:8px;border-radius:10px;cursor:pointer" onclick="filtrarCat('${k}','Femenino')"><b>👧 M</b><br><b style="font-size:18px">${cats[k].F.length}</b></div></div><button class="btn" style="width:100%;margin-top:6px;background:${filtroCat===k&&filtroGenero==='Todos'?'var(--yellow)':'#333'};color:${filtroCat===k&&filtroGenero==='Todos'?'black':'white'}" onclick="filtrarCat('${k}','Todos')">VER TODOS</button></div>`;});}
+function renderCatFiltrada(){const cont=document.getElementById('listCategoriaFiltrada');if(!cont)return;let entries=Object.entries(jugadores);if(filtroCat!=='Todos')entries=entries.filter(([k,v])=>getCat(v.edad).id===filtroCat);if(filtroGenero!=='Todos')entries=entries.filter(([k,v])=>v.genero===filtroGenero);const titulo=document.getElementById('tituloListaCat');if(titulo){if(filtroCat==='Todos'&&filtroGenero==='Todos') titulo.innerText=`📋 Todos (${entries.length})`;else titulo.innerText=`📋 ${filtroCat!=='Todos'?filtroCat.toUpperCase()+' ':''}${filtroGenero!=='Todos'?filtroGenero.toUpperCase()+' ':''}(${entries.length})`;}cont.innerHTML='';if(entries.length===0){cont.innerHTML='<p style="opacity:.5;padding:8px">No hay</p>';return;}entries.forEach(([id,j])=>{const deuda=getDeudaAcumulada(id);const hab=habilidades[id]||{};let prom=0,c=0;Object.values(hab).forEach(v=>{prom+=v;c++;});prom=c? (prom/c).toFixed(1):'-';let fotoMini=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">🏐</div>`;let estado=deuda.meses.length===0?`<span class="badge al-dia">AL DIA</span>`:`<span class="badge debe">DEBE ${deuda.meses.length}</span>`;cont.innerHTML+=`<div style="border:1px solid var(--border);padding:10px;margin:6px 0;border-radius:12px;background:#000;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;gap:6px;align-items:center">${fotoMini}<div><b>${j.nombre}</b><br><small>⭐${prom}</small></div></div><div style="display:flex;gap:4px;align-items:center">${estado}<button class="btn btn-green" style="padding:4px 8px" onclick="enviarWasa('${id}')">WASA</button></div></div>`;});}
+function renderAsis(){const f=fAsis.value;const cont=listAsis;if(!cont)return;cont.innerHTML='';Object.entries(jugadores).forEach(([id,j])=>{const pres=asistencias[f]?.[j.nombre];let fotoMini=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">🏐</div>`;cont.innerHTML+=`<div class="asis-row"><div style="display:flex;gap:6px;align-items:center">${fotoMini}<div><b>${j.nombre}</b><br><small>${getCat(j.edad).t}</small></div></div><div class="switch ${pres?'on':''}" onclick="toggle('${j.nombre}')"></div></div>`;});}
+function renderHist(){const c=hist;if(!c)return;c.innerHTML='';Object.keys(asistencias).sort().reverse().forEach(fecha=>{const reg=asistencias[fecha]||{};const nombres=Object.entries(reg).filter(([,v])=>v).map(([n])=>n);if(!nombres.length)return;c.innerHTML+=`<div style="padding:10px;background:#000;border:1px solid var(--border);margin:6px 0;border-radius:12px"><b style="color:var(--red)">${fecha}</b> - ${nombres.length}<br><small>${nombres.join(', ')}</small></div>`;});}
+window.toggle=(n)=>{const f=fAsis.value;if(!asistencias[f])asistencias[f]={};asistencias[f][n]=!asistencias[f][n];set(ref(db,'asistencias/'+f),asistencias[f]);}
+window.marcarTodos=(v)=>{const f=fAsis.value;const obj={};Object.values(jugadores).forEach(j=>obj[j.nombre]=v);set(ref(db,'asistencias/'+f),obj);}
+function renderSolic(){const c=listaSolicitudes;if(!c)return;c.innerHTML='';const tot=Object.keys(solicitudes).length;numSol.innerText=tot;if(!tot){c.innerHTML='<p style="padding:8px;background:var(--bg2);border-radius:10px;color:var(--text3)">No hay solicitudes</p>';return;}Object.entries(solicitudes).forEach(([id,s])=>{c.innerHTML+=`<div style="border:1px solid var(--border);padding:10px;margin:8px 0;border-radius:12px;background:var(--bg)"><div><b>${s.nombre}</b> (${s.edad}a) ${getCat(s.edad).t} ${s.genero}<br><small>${s.tel}</small></div><div style="margin-top:8px;display:flex;gap:6px"><button class="btn" style="background:var(--green);color:#000;flex:1" onclick="aceptarSolicitud('${id}')">ACEPTAR</button><button class="btn" style="background:#333;flex:1" onclick="rechazarSolicitud('${id}')">RECHAZAR</button></div></div>`;});}
+window.openTab=(id,btn)=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+window.contactarEntrenador=()=>{window.open(`https://api.whatsapp.com/send?phone=573024404924&text=${encodeURIComponent("Hola entrenador IMPERIUM VOLEY 🏐")}`,'_blank');}
+window.render = render;
+fAsis.value=new Date().toISOString().split('T')[0];fpago.value=new Date().toISOString().split('T')[0];finsc.value=new Date().toISOString().split('T')[0];
+if(document.getElementById('unifFecha')) document.getElementById('unifFecha').value=new Date().toISOString().split('T')[0];
+const buscador = document.getElementById('buscar');
+if(buscador){buscador.addEventListener('input', render);buscador.addEventListener('keyup', render);}
+document.getElementById('fileFotoPerfilJug')?.addEventListener('change',function(){if(this.files[0]){const r=new FileReader();r.onload=e=>{const img=document.getElementById('previewFotoPerfilJug');img.src=e.target.result;img.style.display='block';};r.readAsDataURL(this.files[0]);}});
+document.getElementById('fileFotoNuevo')?.addEventListener('change',function(){if(this.files[0]){const r=new FileReader();r.onload=e=>{const img=document.getElementById('previewFotoNuevo');img.src=e.target.result;img.style.display='block';};r.readAsDataURL(this.files[0]);}});
+document.getElementById('fileFotoEdit')?.addEventListener('change',function(){if(this.files[0]){const r=new FileReader();r.onload=e=>{const img=document.getElementById('previewFotoEdit');img.src=e.target.result;img.style.display='block';};r.readAsDataURL(this.files[0]);}});
+document.getElementById('fileModeloVideo')?.addEventListener('change',function(){if(this.files[0]){const url=URL.createObjectURL(this.files[0]);const v=document.getElementById('previewModeloVideo');v.src=url;v.style.display='block';document.getElementById('txtModeloVideo').innerText=this.files[0].name+' '+(this.files[0].size/1024/1024).toFixed(1)+'MB';}});
+onValue(ref(db,'jugadores'),s=>{jugadores=s.val()||{};render();filtrarJugadoresSelect();filtrarSelHabilidades();renderUniformes();if(currentJugadorId) mostrarFotoPerfil();const selU=document.getElementById('selUnifJug');if(selU){selU.innerHTML='';Object.entries(jugadores).forEach(([k,v])=>{const o=document.createElement('option');o.value=k;o.textContent=`${v.nombre} - ${getCat(v.edad).t}`;selU.appendChild(o);});}});
+onValue(ref(db,'asistencias'),s=>{asistencias=s.val()||{};renderAsis();renderHist();});
+onValue(ref(db,'solicitudes'),s=>{solicitudes=s.val()||{};renderSolic();});
+onValue(ref(db,'pagosMensuales'),s=>{pagosMensuales=s.val()||{};render();});
+onValue(ref(db,'documentos'),s=>{documentos=s.val()||{};renderDocs();render();});
+onValue(ref(db,'habilidades'),s=>{habilidades=s.val()||{};render();renderHabilidades();if(currentJugadorId) renderMisHabilidades();});
+onValue(ref(db,'habilidadesHistorial'),s=>{habilidadesHistorial=s.val()||{};if(document.getElementById('selHabJug')?.value) renderHabilidades();});
+onValue(ref(db,'uniformes'),s=>{uniformes=s.val()||{};renderUniformes();renderMiUniforme();});
+onValue(ref(db,'uniformesModelos'),s=>{uniformesModelos=s.val()||{};renderModelosUniformes();renderModelosParaJugador();});
+onValue(ref(db,'configClub'),s=>{if(s.val())configClub=s.val();if(mesActualTxt)mesActualTxt.innerText=getMesActual();});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
+</script>
+</body>
+</html>
