@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMPERIUM VOLEY V4.8 - FIX PERMISSION</title>
+<title>IMPERIUM VOLEY</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#D90429">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
@@ -17,14 +17,18 @@
 .landing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;max-width:1100px;margin:18px auto;padding:0 12px}
 .card{background:linear-gradient(180deg,var(--bg2),var(--card));border:1px solid var(--border);border-left:4px solid var(--red);padding:16px;border-radius:20px;margin-bottom:14px}
 .card.blue{border-left-color:var(--blue)}.card.green{border-left-color:var(--green)}.card.yellow{border-left-color:var(--yellow)}.card.purple{border-left-color:var(--purple)}.card.gold{border-left-color:var(--yellow)}.card.orange{border-left-color:#FF6B00}
+.card.pausada{border-left-color:var(--yellow) !important;background:linear-gradient(180deg,#1a1800,var(--card)) !important}
 .btn{background:var(--red);color:white;padding:12px 14px;border:none;font-weight:800;font-size:11px;border-radius:12px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn-white{background:var(--text);color:black}.btn-green{background:var(--green);color:#000}.btn-outline{background:transparent;border:1.5px solid var(--border-light);color:var(--text2)}
+.btn-pausa{background:var(--yellow);color:#000}.btn-reanudar{background:var(--green);color:#000}
 .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.kpi-item{background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:14px;text-align:center}.kpi-item b{font-size:18px;display:block}
 .header{position:sticky;top:0;z-index:50;background:rgba(15,15,15,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
 .menu{display:flex;gap:6px;overflow-x:auto}.menu::-webkit-scrollbar{display:none}
 .menu button{white-space:nowrap;background:var(--bg2);border:1px solid var(--border);color:var(--text2);padding:8px 10px;font-weight:800;font-size:9px;border-radius:100px;min-height:44px}.menu button.active{background:var(--text);color:#000}
 input,select{width:100%;padding:12px;margin:6px 0;background:#0A0A0A;border:1px solid var(--border);color:white;border-radius:12px;min-height:44px}
 .badge{padding:5px 10px;font-size:11px;font-weight:800;border-radius:100px;display:inline-block}.al-dia{background:var(--text);color:black}.debe{background:var(--red);color:white}
+.badge-pausa{background:var(--yellow);color:#000;animation:pulsePausa 1.4s infinite}
+@keyframes pulsePausa{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 .tab{display:none}.tab.active{display:block}
 #login{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:100;display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}
 .login-box{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--red);padding:24px;max-width:480px;width:100%;border-radius:24px;max-height:92vh;overflow-y:auto}
@@ -131,7 +135,7 @@ input,select{width:100%;padding:12px;margin:6px 0;background:#0A0A0A;border:1px 
 <div id="t9" class="tab"><div class="card gold"><h2 style="color:gold">🏆 RANKING</h2><select id="filtroRankingCat" onchange="renderRanking()"><option value="Todos">Todas</option><option value="pequena">Pequeña</option><option value="sub15">Sub 15</option><option value="sub17">Sub 17</option><option value="sub20">Sub 20</option><option value="mayores">Mayores</option></select></div><div id="rankingContainer"></div></div>
 <div id="t6" class="tab"><div class="card blue"><h2 style="color:var(--blue)">🏆 CATEGORÍAS</h2><div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn btn-white" style="flex:1" onclick="filtrarCat('Todos','Todos')">TODOS <span id="kpiTodos">0</span></button><button class="btn" style="flex:1;background:var(--blue);color:black" onclick="filtrarCat('Todos','Masculino')">👦 H <span id="kpiHombres">0</span></button><button class="btn" style="flex:1;background:var(--pink);color:white" onclick="filtrarCat('Todos','Femenino')">👧 M <span id="kpiMujeres">0</span></button></div><div id="filtroActivoCat" style="margin-top:10px;font-size:12px;color:var(--yellow);font-weight:800"></div></div><div id="catContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px"></div><div class="card" style="margin-top:14px"><h2 id="tituloListaCat">📋 Filtrados</h2><div id="listCategoriaFiltrada"></div></div></div>
 <div id="t2" class="tab"><div class="card"><h2>📅 Asistencia</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="fAsis" type="date" style="max-width:160px"><button class="btn" onclick="marcarTodos(true)">✅ Todos</button><button class="btn" style="background:#333" onclick="marcarTodos(false)">❌ Ninguno</button></div><div id="listAsis" style="margin-top:12px"></div></div><div class="card"><h2>📊 Historial</h2><div id="hist"></div></div></div>
-<div id="t3" class="tab"><div class="card"><h2>💰 FINANZAS - <span id="mesActualTxt"></span></h2><div class="qr-box" style="max-width:260px;margin:12px auto"><b style="color:black">NEQUI 3024404924</b><br><img src="breb.png"></div><div class="kpi"><div class="kpi-item"><b id="kpiTotal">0</b><small>TOTAL</small></div><div class="kpi-item"><b id="kpiMesPagaron">0</b><small>PAGARON</small></div><div class="kpi-item"><b id="kpiPorCobrar" style="color:var(--red)">$0</b><small>POR COBRAR</small></div><div class="kpi-item"><b id="kpiInscPagadas">0</b><small>INSC</small></div></div></div><div class="card green"><h2 style="color:var(--green)">💳 MENSUALIDAD</h2><div id="listPagos"></div></div><div class="card yellow"><h2 style="color:var(--yellow)">📝 INSCRIPCIÓN</h2><div id="listInsc"></div></div></div>
+<div id="t3" class="tab"><div class="card"><h2>💰 FINANZAS - <span id="mesActualTxt"></span></h2><div class="qr-box" style="max-width:260px;margin:12px auto"><b style="color:black">NEQUI 3024404924</b><br><img src="breb.png"></div><div class="kpi"><div class="kpi-item"><b id="kpiTotal">0</b><small>TOTAL</small></div><div class="kpi-item"><b id="kpiMesPagaron">0</b><small>PAGARON</small></div><div class="kpi-item"><b id="kpiPorCobrar" style="color:var(--red)">$0</b><small>POR COBRAR</small></div><div class="kpi-item"><b id="kpiInscPagadas">0</b><small>INSC</small></div><div class="kpi-item" style="background:#1a1800;border-color:var(--yellow)"><b id="kpiPausa" style="color:var(--yellow)">0</b><small>PAUSA</small></div></div></div><div class="card green"><h2 style="color:var(--green)">💳 MENSUALIDAD</h2><div id="listPagos"></div></div><div class="card yellow"><h2 style="color:var(--yellow)">📝 INSCRIPCIÓN</h2><div id="listInsc"></div></div></div>
 <div id="t7" class="tab"><div class="card"><h2>📁 DOCUMENTOS</h2><div class="grid-2"><div><select id="selDocJug"></select><div class="upload-box"><b>Adress</b><input type="file" id="fileAdress"></div><div class="upload-box"><b>Cédula</b><input type="file" id="fileCedulaAcudiente"></div><div class="upload-box"><b>Tarjeta</b><input type="file" id="fileTarjeta"></div><div class="upload-box"><b>Ficha</b><input type="file" id="fileFichaD"></div><div class="upload-box"><b>Comprobante</b><input type="file" id="fileComp"></div><button class="btn" style="width:100%;background:#7c4dff" onclick="subirVariosDocumentos()">📤 SUBIR</button></div><div><h3>Del jugador</h3><div id="listaDocs"></div></div></div></div><div class="card"><h2>📁 Todos</h2><div id="listaTodosDocs"></div></div></div>
 <div id="t5" class="tab"><div class="card"><h2>🔔 SOLICITUDES</h2><div id="listaSolicitudes"></div></div></div>
 </div>
@@ -170,7 +174,11 @@ window.previewFile=(input,imgId)=>{const file=input.files[0]; if(!file) return;c
 window.salirJugador=()=>{currentJugadorId=null;modeloSeleccionadoId=null;vistaJ.style.display='none';vistaE.style.display='none';document.getElementById('landing').style.display='block';login.style.display='none';window.scrollTo(0,0);}
 window.filtrarJugadoresSelect=()=>{const filtro=document.getElementById('filtroNombreJug')?.value.toLowerCase().trim()||'';const sel=document.getElementById('selJug');const cont=document.getElementById('contadorJug');if(!sel) return;sel.innerHTML='';let lista=Object.entries(jugadores);if(filtro!==''){lista=lista.filter(([k,v])=>v.nombre.toLowerCase().includes(filtro));}lista.sort((a,b)=>a[1].nombre.localeCompare(b[1].nombre));lista.forEach(([k,v])=>{let o=document.createElement('option');o.value=k;o.textContent=`${v.nombre} - ${getCat(v.edad).t}`;sel.appendChild(o);});if(cont) cont.innerText=filtro?`${lista.length} encontrados`:`Total: ${Object.keys(jugadores).length}`;}
 window.filtrarSelHabilidades=()=>{const filtro=document.getElementById('filtroHabJug')?.value.toLowerCase().trim()||'';const sel=document.getElementById('selHabJug');const cont=document.getElementById('contadorHab');if(!sel) return;sel.innerHTML='';let lista=Object.entries(jugadores);if(filtro!==''){lista=lista.filter(([k,v])=>v.nombre.toLowerCase().includes(filtro));}lista.sort((a,b)=>a[1].nombre.localeCompare(b[1].nombre));lista.forEach(([k,v])=>{let o=document.createElement('option');o.value=k;o.textContent=`${v.nombre}`;sel.appendChild(o);});if(cont) cont.innerText=filtro?`${lista.length}`:`${lista.length}`;renderHabilidades();}
-window.loginJugador=()=>{const id=selJug.value;const j=jugadores[id];if(!j)return alert('Selecciona');currentJugadorId=id;modeloSeleccionadoId=null;login.style.display='none';document.getElementById('landing').style.display='none';vistaE.style.display='none';vistaJ.style.display='block';const deuda=getDeudaAcumulada(id);let html=deuda.meses.length===0?`<div style="background:#fff;color:#000;padding:12px;font-weight:800;border-radius:12px">AL DIA ✅<br><small>${formatoFecha(j.fechaPago)}</small></div>`:`<div style="background:var(--red);color:#fff;padding:12px;font-weight:800;border-radius:12px">DEBE ${deuda.meses.length} MES<br>$${deuda.total.toLocaleString()}</div>`;let fotoHtml=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img" style="margin:0 auto 12px">`:`<div class="perfil-img" style="display:flex;align-items:center;justify-content:center;font-size:36px;background:#222">🏐</div>`;miEstado.innerHTML=`<div style="padding:16px;background:#000;border-radius:14px;text-align:center">${fotoHtml}<h2>${j.nombre}</h2><p style="font-size:12px;margin:8px 0">${getCat(j.edad).t} - ${j.pos}</p>${html}<div style="margin-top:10px"><button class="btn btn-white" style="width:100%" onclick="generarReciboPDF('${id}','${getMesActual()}')">📄 RECIBO</button></div></div>`;mostrarFotoPerfil();renderMiUniforme();renderModelosParaJugador();renderMisHabilidades();}
+window.loginJugador=()=>{const id=selJug.value;const j=jugadores[id];if(!j)return alert('Selecciona');currentJugadorId=id;modeloSeleccionadoId=null;login.style.display='none';document.getElementById('landing').style.display='none';vistaE.style.display='none';vistaJ.style.display='block';const deuda=getDeudaAcumulada(id);let html;
+if(j.mensualidadPausada){html=`<div style="background:var(--yellow);color:#000;padding:12px;font-weight:800;border-radius:12px">⏸ EN PAUSA<br><small>Desde ${j.fechaPausa||''} - No genera cobro</small></div>`;}
+else if(deuda.meses.length===0){html=`<div style="background:#fff;color:#000;padding:12px;font-weight:800;border-radius:12px">AL DIA ✅<br><small>${formatoFecha(j.fechaPago)}</small></div>`;}
+else{html=`<div style="background:var(--red);color:#fff;padding:12px;font-weight:800;border-radius:12px">DEBE ${deuda.meses.length} MES<br>$${deuda.total.toLocaleString()}</div>`;}
+let fotoHtml=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img" style="margin:0 auto 12px">`:`<div class="perfil-img" style="display:flex;align-items:center;justify-content:center;font-size:36px;background:#222">🏐</div>`;miEstado.innerHTML=`<div style="padding:16px;background:#000;border-radius:14px;text-align:center">${fotoHtml}<h2>${j.nombre}</h2><p style="font-size:12px;margin:8px 0">${getCat(j.edad).t} - ${j.pos}</p>${html}<div style="margin-top:10px"><button class="btn btn-white" style="width:100%" onclick="generarReciboPDF('${id}','${getMesActual()}')">📄 RECIBO</button></div></div>`;mostrarFotoPerfil();renderMiUniforme();renderModelosParaJugador();renderMisHabilidades();}
 function getCat(edad){edad=parseInt(edad);if(edad>=8&&edad<=11)return{t:'PEQUEÑA',c:'var(--blue)',id:'pequena'};if(edad>=12&&edad<=15)return{t:'SUB 15',c:'#ffab00',id:'sub15'};if(edad>=16&&edad<=17)return{t:'SUB 17',c:'#ff2d6b',id:'sub17'};if(edad>=18&&edad<=20)return{t:'SUB 20',c:'#7c4dff',id:'sub20'};return{t:'MAYORES',c:'var(--green)',id:'mayores'};}
 function calcEdad(f){if(!f)return 0;const p=f.split('-');const hoy=new Date();let edad=hoy.getFullYear()-parseInt(p[0]);const mm=hoy.getMonth()-(parseInt(p[1])-1);if(mm<0||(mm===0&&hoy.getDate()<parseInt(p[2])))edad--;return edad;}
 window.calcEdad=()=>{const f=fechaNacimiento.value;if(!f){verEdad.innerText='';return 0;}const e=calcEdad(f);verEdad.innerText=e+'a - '+getCat(e).t;return e;}
@@ -178,28 +186,40 @@ window.calcEdadEdit=()=>{const f=editFechaNac.value;if(!f){editVerEdad.innerText
 function getMesesDesdeInscripcion(j){
   if(!j) return [getMesActual()];
   let inicioStr = j.fechaInscripcion || j.fechaPago || (getMesActual()+"-01");
-  if(j.fechaInscripcion && j.fechaPago){
-    if(j.fechaPago < j.fechaInscripcion){
-      inicioStr = j.fechaPago;
-    }
-  }
+  if(j.fechaInscripcion && j.fechaPago){ if(j.fechaPago < j.fechaInscripcion){ inicioStr = j.fechaPago; } }
   let ini=new Date(inicioStr);ini.setDate(1);
   let hoy=new Date();hoy.setDate(1);
   let meses=[];let cur=new Date(ini);let guard=0;
-  while(cur<=hoy && guard<120){
-    meses.push(cur.getFullYear()+"-"+String(cur.getMonth()+1).padStart(2,"0"));
-    cur.setMonth(cur.getMonth()+1);guard++;
-  }
+  while(cur<=hoy && guard<120){ meses.push(cur.getFullYear()+"-"+String(cur.getMonth()+1).padStart(2,"0")); cur.setMonth(cur.getMonth()+1);guard++; }
   return meses.length?meses:[getMesActual()];
 }
+
+// ===== FUNCION MODIFICADA CON PAUSA =====
 function getDeudaAcumulada(jid){
   const j=jugadores[jid];
   if(!j) return {meses:[], total:0};
+  // SI ESTA EN PAUSA, NO GENERA DEUDA NUEVA - CONGELA
+  if(j.mensualidadPausada===true){
+    // Si ya tenia deuda congelada, respétala
+    if(typeof j.deudaCongelada !== 'undefined'){
+      return {meses:[], total:j.deudaCongelada, enPausa:true, mesesPausa:true};
+    }
+    // Si no, calcula solo hasta fecha de pausa
+    let fechaLimite = j.fechaPausaReal ? new Date(j.fechaPausaReal) : new Date();
+    fechaLimite.setDate(1);
+    let inicioStr = j.fechaInscripcion || j.fechaPago || (getMesActual()+"-01");
+    let ini=new Date(inicioStr);ini.setDate(1);
+    let meses=[];let cur=new Date(ini);let guard=0;
+    while(cur<=fechaLimite && guard<120){ meses.push(cur.getFullYear()+"-"+String(cur.getMonth()+1).padStart(2,"0")); cur.setMonth(cur.getMonth()+1);guard++; }
+    let debe=[]; meses.forEach(m=>{if(!(pagosMensuales[m] && pagosMensuales[m][jid])) debe.push(m);});
+    // Guarda la deuda congelada para que no siga creciendo
+    return {meses:[], total:debe.length*configClub.mensualidad, enPausa:true, deudaReal:debe};
+  }
   const todos=getMesesDesdeInscripcion(j);
-  let debe=[];
-  todos.forEach(m=>{if(!(pagosMensuales[m] && pagosMensuales[m][jid])) debe.push(m);});
+  let debe=[]; todos.forEach(m=>{if(!(pagosMensuales[m] && pagosMensuales[m][jid])) debe.push(m);});
   return {meses:debe, total:debe.length*configClub.mensualidad};
 }
+
 function toBase64(f){return new Promise(r=>{const fr=new FileReader();fr.onload=e=>r(e.target.result);fr.readAsDataURL(f);});}
 function mostrarFotoPerfil(){if(!currentJugadorId) return;const j=jugadores[currentJugadorId];const img=document.getElementById('miFotoPerfil');const txt=document.getElementById('sinFotoTxt');if(j?.fotoPerfil){img.src=j.fotoPerfil;img.style.display='block';txt.style.display='none';}else{img.style.display='none';txt.style.display='block';}}
 window.subirFotoPerfilJugador=async()=>{const file=document.getElementById('fileFotoPerfilJug').files[0];if(!file) return alert('Elige foto');if(file.size>2*1024*1024) return alert('Max 2MB');const base=await toBase64(file);update(ref(db,'jugadores/'+currentJugadorId),{fotoPerfil:base});alert('✅ Foto guardada');}
@@ -211,52 +231,75 @@ window.pagarMesAtrasado=(id,mes)=>{pagarConReciboAuto(id,mes);}
 window.cancelarPago=(id,mes)=>{const m=mes||getMesActual();if(!pagosMensuales[m]?.[id]){alert('No tiene pago en '+m);return;}if(!confirm('Cancelar pago '+m+'?')) return;remove(ref(db,'pagosMensuales/'+m+'/'+id)).then(()=>{const mesesPagados=Object.keys(pagosMensuales).filter(k=>pagosMensuales[k]?.[id]).sort().reverse();const ultimo=mesesPagados.find(k=>k!==m);if(ultimo && pagosMensuales[ultimo]?.[id]){update(ref(db,'jugadores/'+id),{fechaPago:pagosMensuales[ultimo][id].fecha});}else{const j=jugadores[id];update(ref(db,'jugadores/'+id),{fechaPago:j.fechaInscripcion||new Date().toISOString().split('T')[0]});}});}
 window.pagarInsc=(id)=>{update(ref(db,'jugadores/'+id),{inscPagada:true});}
 window.cancelarInsc=(id)=>{if(!confirm('Cancelar?')) return;update(ref(db,'jugadores/'+id),{inscPagada:false});}
-window.exportarExcelPlantilla=()=>{const data=Object.values(jugadores).map(j=>{const id=Object.keys(jugadores).find(k=>jugadores[k].nombre===j.nombre);const deuda=getDeudaAcumulada(id);return{Nombre:j.nombre,Edad:j.edad,Categoria:getCat(j.edad).t,Genero:j.genero,Posicion:j.pos,Telefono:j.tel,UltimoPago:j.fechaPago,Deuda:deuda.total};});const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Plantilla');XLSX.writeFile(wb,`Plantilla_${getMesActual()}.xlsx`);}
-window.exportarExcelFinanzas=()=>{const mes=getMesActual();const data=Object.entries(jugadores).map(([id,j])=>{const pagado=pagosMensuales[mes]?.[id]? 'SI':'NO';const deuda=getDeudaAcumulada(id);return{Nombre:j.nombre,Estado:pagado,Debe:deuda.total,Ultimo:j.fechaPago};});const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Finanzas');XLSX.writeFile(wb,`Finanzas_${mes}.xlsx`);}
-window.enviarRecordatorioMasivo=()=>{const deudores=Object.entries(jugadores).filter(([id])=>getDeudaAcumulada(id).meses.length>0);if(!deudores.length) return alert('Todos al día!');let mensaje=`🏐 IMPERIUM - DEUDORES%0A%0A`;deudores.forEach(([id,j])=>{const d=getDeudaAcumulada(id);mensaje+=`• ${j.nombre}: $${d.total.toLocaleString()}%0A`;});window.open(`https://api.whatsapp.com/send?text=${mensaje}`,'_blank');}
+
+// ===== NUEVAS FUNCIONES PAUSA =====
+window.pausarJugador=(id)=>{
+  const j=jugadores[id];
+  if(!j) return;
+  if(!confirm(`¿Pausar mensualidad de ${j.nombre}?\n\n• No generará cobro\n• No contará mora\n• Aparecerá como EN PAUSA\n• Deuda actual queda congelada`)) return;
+  const deudaActual=getDeudaAcumulada(id);
+  const hoy=new Date().toISOString().split('T')[0];
+  const hoyTxt=new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'short'});
+  update(ref(db,'jugadores/'+id),{
+    mensualidadPausada:true,
+    fechaPausa:hoyTxt,
+    fechaPausaReal:hoy,
+    deudaCongelada:deudaActual.total
+  });
+};
+window.reanudarJugador=(id)=>{
+  const j=jugadores[id];
+  if(!j) return;
+  if(!confirm(`¿Reanudar mensualidad de ${j.nombre}?\n\nDesde hoy volverá a correr el pago normal.`)) return;
+  const hoy=new Date().toISOString().split('T')[0];
+  update(ref(db,'jugadores/'+id),{
+    mensualidadPausada:false,
+    fechaReanudacion:hoy,
+    fechaPausa:null,
+    fechaPausaReal:null,
+    deudaCongelada:null,
+    fechaPago:hoy // Reinicia conteo desde hoy
+  });
+  // Crea pago del mes de reanudación para que no aparezca como debe inmediatamente
+  set(ref(db,'pagosMensuales/'+getMesActual()+'/'+id),{jugadorId:id,nombre:j.nombre,fecha:hoy,monto:configClub.mensualidad});
+};
+
+window.exportarExcelPlantilla=()=>{const data=Object.values(jugadores).map(j=>{const id=Object.keys(jugadores).find(k=>jugadores[k].nombre===j.nombre);const deuda=getDeudaAcumulada(id);return{Nombre:j.nombre,Edad:j.edad,Categoria:getCat(j.edad).t,Genero:j.genero,Posicion:j.pos,Telefono:j.tel,UltimoPago:j.fechaPago,Deuda:deuda.total,Estado:j.mensualidadPausada?'EN PAUSA':'ACTIVA'};});const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Plantilla');XLSX.writeFile(wb,`Plantilla_${getMesActual()}.xlsx`);}
+window.exportarExcelFinanzas=()=>{const mes=getMesActual();const data=Object.entries(jugadores).map(([id,j])=>{const pagado=pagosMensuales[mes]?.[id]? 'SI':'NO';const deuda=getDeudaAcumulada(id);return{Nombre:j.nombre,Estado:j.mensualidadPausada?'PAUSA':pagado,Debe:deuda.total,Ultimo:j.fechaPago};});const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Finanzas');XLSX.writeFile(wb,`Finanzas_${mes}.xlsx`);}
+window.enviarRecordatorioMasivo=()=>{const deudores=Object.entries(jugadores).filter(([id])=>{const j=jugadores[id];if(j.mensualidadPausada) return false; return getDeudaAcumulada(id).meses.length>0;});if(!deudores.length) return alert('Todos al día o en pausa!');let mensaje=`🏐 IMPERIUM - DEUDORES%0A%0A`;deudores.forEach(([id,j])=>{const d=getDeudaAcumulada(id);mensaje+=`• ${j.nombre}: $${d.total.toLocaleString()}%0A`;});window.open(`https://api.whatsapp.com/send?text=${mensaje}`,'_blank');}
 window.filtrarCat=(cat,gen)=>{filtroCat=cat;filtroGenero=gen||'Todos';render();}
-window.enviarWasa=(id)=>{const j=jugadores[id];let tel=j.tel.replace(/\D/g,'');if(tel.startsWith('57')) tel=tel.substring(2);if(tel.length>10) tel=tel.slice(-10);const deuda=getDeudaAcumulada(id);const texto=`🏐 ${j.nombre} - ${deuda.meses.length===0?'AL DIA':'DEBE $'+deuda.total.toLocaleString()}%0ANequi: 3024404924`;window.open(`https://api.whatsapp.com/send?phone=57${tel}&text=${texto}`,'_blank');}
-window.addJugador=async()=>{const fp=fpago.value||new Date().toISOString().split('T')[0];const fi=finsc.value||fp;if(!nombre.value||!tel.value||!fechaNacimiento.value)return alert('Falta datos');const edad=calcEdad(fechaNacimiento.value);const cat=getCat(edad);let fotoPerfil=null;const fileFoto=document.getElementById('fileFotoNuevo').files[0];if(fileFoto){fotoPerfil=await toBase64(fileFoto);}const r=push(ref(db,'jugadores'),{nombre:nombre.value,edad,fechaNacimiento:fechaNacimiento.value,genero:genero.value,pos:pos.value,tel:tel.value,formaPago:formaPago.value,fechaPago:fp,fechaInscripcion:fi,inscPagada:document.getElementById('inscPagadaCheck').checked,categoria:cat.id,fotoPerfil});const mesPago=getMesDeFecha(fp);set(ref(db,'pagosMensuales/'+mesPago+'/'+r.key),{jugadorId:r.key,nombre:nombre.value,fecha:fp,monto:configClub.mensualidad});nombre.value='';tel.value='';fechaNacimiento.value='';}
+window.enviarWasa=(id)=>{const j=jugadores[id];let tel=j.tel.replace(/\D/g,'');if(tel.startsWith('57')) tel=tel.substring(2);if(tel.length>10) tel=tel.slice(-10);const deuda=getDeudaAcumulada(id);const texto=`🏐 ${j.nombre} - ${j.mensualidadPausada?'EN PAUSA ⏸':deuda.meses.length===0?'AL DIA':'DEBE $'+deuda.total.toLocaleString()}%0ANequi: 3024404924`;window.open(`https://api.whatsapp.com/send?phone=57${tel}&text=${texto}`,'_blank');}
+window.addJugador=async()=>{const fp=fpago.value||new Date().toISOString().split('T')[0];const fi=finsc.value||fp;if(!nombre.value||!tel.value||!fechaNacimiento.value)return alert('Falta datos');const edad=calcEdad(fechaNacimiento.value);const cat=getCat(edad);let fotoPerfil=null;const fileFoto=document.getElementById('fileFotoNuevo').files[0];if(fileFoto){fotoPerfil=await toBase64(fileFoto);}const r=push(ref(db,'jugadores'),{nombre:nombre.value,edad,fechaNacimiento:fechaNacimiento.value,genero:genero.value,pos:pos.value,tel:tel.value,formaPago:formaPago.value,fechaPago:fp,fechaInscripcion:fi,inscPagada:document.getElementById('inscPagadaCheck').checked,categoria:cat.id,fotoPerfil,mensualidadPausada:false});const mesPago=getMesDeFecha(fp);set(ref(db,'pagosMensuales/'+mesPago+'/'+r.key),{jugadorId:r.key,nombre:nombre.value,fecha:fp,monto:configClub.mensualidad});nombre.value='';tel.value='';fechaNacimiento.value='';}
 window.enviarSolicitud=async()=>{if(!rNombre.value||!rFechaNac.value||!rTel.value)return alert('Falta datos');if(!fileRAdress.files[0]||!fileRCedulaAcudiente.files[0]||!fileRTarjeta.files[0]||!fileRFicha.files[0])return alert('Sube 4 docs');const edad=calcEdad(rFechaNac.value);const a=await toBase64(fileRAdress.files[0]);const c=await toBase64(fileRCedulaAcudiente.files[0]);const t=await toBase64(fileRTarjeta.files[0]);const f=await toBase64(fileRFicha.files[0]);await push(ref(db,'solicitudes'),{nombre:rNombre.value,fechaNacimiento:rFechaNac.value,edad,genero:rGenero.value,pos:rPos.value,tel:rTel.value,categoria:getCat(edad).id,fechaSolicitud:new Date().toISOString().split('T')[0],docs:{adress:{nombreArchivo:fileRAdress.files[0].name,dataUrl:a},cedulaAcudiente:{nombreArchivo:fileRCedulaAcudiente.files[0].name,dataUrl:c},tarjetaDeportista:{nombreArchivo:fileRTarjeta.files[0].name,dataUrl:t},ficha:{nombreArchivo:fileRFicha.files[0].name,dataUrl:f}}});alert('✅ Enviada');rNombre.value='';rTel.value='';rFechaNac.value='';}
-window.aceptarSolicitud=async(id)=>{const s=solicitudes[id];if(!confirm('Aceptar '+s.nombre+'?'))return;const hoy=new Date().toISOString().split('T')[0];const r=push(ref(db,'jugadores'),{nombre:s.nombre,edad:s.edad,fechaNacimiento:s.fechaNacimiento,genero:s.genero,pos:s.pos,tel:s.tel,formaPago:'Nequi',fechaPago:hoy,fechaInscripcion:hoy,inscPagada:true,categoria:s.categoria});const mesPago=getMesDeFecha(hoy);set(ref(db,'pagosMensuales/'+mesPago+'/'+r.key),{jugadorId:r.key,nombre:s.nombre,fecha:hoy,monto:configClub.mensualidad});remove(ref(db,'solicitudes/'+id));}
+window.aceptarSolicitud=async(id)=>{const s=solicitudes[id];if(!confirm('Aceptar '+s.nombre+'?'))return;const hoy=new Date().toISOString().split('T')[0];const r=push(ref(db,'jugadores'),{nombre:s.nombre,edad:s.edad,fechaNacimiento:s.fechaNacimiento,genero:s.genero,pos:s.pos,tel:s.tel,formaPago:'Nequi',fechaPago:hoy,fechaInscripcion:hoy,inscPagada:true,categoria:s.categoria,mensualidadPausada:false});const mesPago=getMesDeFecha(hoy);set(ref(db,'pagosMensuales/'+mesPago+'/'+r.key),{jugadorId:r.key,nombre:s.nombre,fecha:hoy,monto:configClub.mensualidad});remove(ref(db,'solicitudes/'+id));}
 window.rechazarSolicitud=(id)=>{if(confirm('Rechazar?'))remove(ref(db,'solicitudes/'+id));}
 window.delJugador=(id)=>{if(!confirm('Borrar '+jugadores[id].nombre+'?'))return;remove(ref(db,'jugadores/'+id));Object.keys(pagosMensuales).forEach(m=>{if(pagosMensuales[m]?.[id]) remove(ref(db,'pagosMensuales/'+m+'/'+id));});}
 
-// FIX UNIFORMES - Manejo de PERMISSION_DENIED y tamaño
+// FIX UNIFORMES
 window.subirModeloVideoSinStorage=async()=>{
   const file=document.getElementById('fileModeloVideo').files[0];
   if(!file) return alert('Elige video');
-  if(file.size>3*1024*1024){
-    return alert('Video muy pesado para Firebase ('+(file.size/1024/1024).toFixed(1)+'MB). Graba en 480p, 7 seg, max 3MB. Tu video actual es muy grande, reenvialo por WhatsApp en calidad baja.');
-  }
+  if(file.size>3*1024*1024){ return alert('Video muy pesado ('+(file.size/1024/1024).toFixed(1)+'MB). Graba en 480p, 7 seg, max 3MB.'); }
   const genero=document.getElementById('modeloGenero').value;
   const tipo=document.getElementById('modeloTipo').value;
   const nombre=document.getElementById('modeloNombre').value||'Modelo '+tipo;
   const valor=tipo==='Completo'?50000:35000;
   const status=document.getElementById('statusModelo');
   try{
-    status.innerText='⏳ Guardando... esto puede tardar 15-20 seg, no cierres';
+    status.innerText='⏳ Guardando... no cierres';
     status.style.color='var(--yellow)';
     const base64=await toBase64(file);
     await push(ref(db,'uniformesModelos'),{genero,tipo,nombre,valor,videoUrl:base64,fecha:new Date().toISOString().split('T')[0],fechaCreacion:new Date().toISOString()});
-    status.innerText='✅ Guardado correctamente';
-    status.style.color='var(--green)';
+    status.innerText='✅ Guardado'; status.style.color='var(--green)';
     document.getElementById('fileModeloVideo').value='';document.getElementById('modeloNombre').value='';document.getElementById('previewModeloVideo').style.display='none';document.getElementById('txtModeloVideo').innerText='';
     setTimeout(()=>{status.innerText='';},3000);
   }catch(e){
-    console.error(e);
-    status.style.color='var(--red)';
+    console.error(e); status.style.color='var(--red)';
     if(e.code==='PERMISSION_DENIED' || (e.message && e.message.includes('PERMISSION_DENIED'))){
-      status.innerText='❌ PERMISSION_DENIED: Ve a Firebase Console > Realtime Database > Rules y cambia a:\n{\n  "rules": {\n    ".read": true,\n    ".write": true\n  }\n}\nLuego dale Publicar y vuelve a intentar.';
-      alert('PERMISSION_DENIED: Tienes que cambiar las reglas en Firebase Console. Ve a Realtime Database > Rules > pon .read:true .write:true > Publicar');
-    }else if(e.message && e.message.toLowerCase().includes('size')){
-      status.innerText='❌ Video muy grande para Firebase. Usa max 3MB';
-    }else{
-      status.innerText='❌ Error: '+e.message;
-    }
+      status.innerText='❌ PERMISSION_DENIED: Ve a Firebase Console > Realtime Database > Rules y pon .read:true .write:true > Publicar';
+    }else{ status.innerText='❌ Error: '+e.message; }
   }
 };
-
 window.borrarModeloUniforme=(id)=>{if(!confirm('¿Borrar modelo?')) return;remove(ref(db,'uniformesModelos/'+id));}
 window.seleccionarModeloParaPedido=(id)=>{
   const m=uniformesModelos[id];if(!m) return;
@@ -347,64 +390,35 @@ function renderHistorialProgreso(jid){const cont=document.getElementById('histor
 function renderRanking(){const filtro=document.getElementById('filtroRankingCat')?.value||'Todos';const cont=document.getElementById('rankingContainer');if(!cont) return;let lista=Object.entries(jugadores).map(([id,j])=>{const hab=habilidades[id]||{};let total=0,c=0;Object.values(hab).forEach(v=>{total+=v;c++;});return{id,nombre:j.nombre,categoria:j.categoria||getCat(j.edad).id,prom:c? total/c : 0};}).filter(j=>j.prom>0);if(filtro!=='Todos') lista=lista.filter(j=>j.categoria===filtro);lista.sort((a,b)=>b.prom-a.prom);if(!lista.length){cont.innerHTML='<p style="color:var(--text3);padding:8px">Sin calificaciones</p>';return;}let html='';if(lista.length>=1){html+=`<div class="podium">`;if(lista[1]) html+=`<div class="podium-item silver"><b>${lista[1].nombre}</b><br>${lista[1].prom.toFixed(1)}</div>`;if(lista[0]) html+=`<div class="podium-item gold"><b>${lista[0].nombre}</b><br>${lista[0].prom.toFixed(1)}</div>`;if(lista[2]) html+=`<div class="podium-item bronze"><b>${lista[2].nombre}</b><br>${lista[2].prom.toFixed(1)}</div>`;html+=`</div>`;}cont.innerHTML=html;}
 function renderMisHabilidades(){if(!currentJugadorId) return;const c=document.getElementById('misHabilidades');if(!c) return;const hab=habilidades[currentJugadorId]||{};let html='';let total=0,cnt=0;SKILLS.forEach(s=>{const v=hab[s]||0;if(v){total+=v;cnt++;}let boxes='';for(let i=1;i<=10;i++){let cls='';if(i<=v){if(v>=8) cls='filled';else if(v>=5) cls='filled mid';else cls='filled low';}boxes+=`<div class="skill-box ${cls}" style="cursor:default"></div>`;}html+=`<div class="skill-row"><div class="skill-name"><b>${s}</b><b>${v}/10</b></div><div class="skill-boxes">${boxes}</div></div>`;});const prom=cnt? (total/cnt).toFixed(1):'0.0';c.innerHTML=`<div class="kpi-item" style="margin-bottom:8px"><b style="color:#7c4dff;font-size:22px">${prom}/10</b><small>PROMEDIO</small></div>`+ (cnt? html : '<p style="color:var(--text3)">Sin calificar</p>');}
 window.subirVariosDocumentos=async()=>{const jid=selDocJug.value;if(!jid)return alert('Elige jugador');const lista=[{file:fileAdress.files[0],tipo:'Adress'},{file:fileCedulaAcudiente.files[0],tipo:'Cédula'},{file:fileTarjeta.files[0],tipo:'Tarjeta'},{file:fileFichaD.files[0],tipo:'Ficha'},{file:fileComp.files[0],tipo:'Comprobante'}].filter(a=>a.file);if(!lista.length)return alert('Elige docs');for(const it of lista){const b=await toBase64(it.file);push(ref(db,'documentos/'+jid),{jugadorNombre:jugadores[jid].nombre,tipo:it.tipo,nombreArchivo:it.file.name,dataUrl:b});}alert('✅ Subidos');}
-window.subirMisDocumentosJugador=async()=>{const jid=currentJugadorId;if(!jid)return alert('No jugador');const lista=[{file:fileJAdress.files[0],tipo:'Adress'},{file:fileJCedulaAcudiente.files[0],tipo:'Cédula'},{file:fileJTarjeta.files[0],tipo:'Tarjeta'},{file:fileJFicha.files[0],tipo:'Ficha'},{file:fileJComp.files[0],tipo:'Comprobante'}].filter(a=>a.file);if(!lista.length)return alert('Elige docs');for(const it of lista){const b=await toBase64(it.file);push(ref(db,'documentos/'+jid),{jugadorNombre:jugadores[jid].nombre,tipo:it.tipo,nombreArchivo:it.file.name,dataUrl:b});}alert('✅ Subidos');}
 function renderDocs(){const jid=selDocJug.value;const c=listaDocs;if(c){c.innerHTML='';if(!jid||!documentos[jid]){c.innerHTML='<p style="color:var(--text3)">Sin docs</p>';}else{Object.entries(documentos[jid]).forEach(([id,d])=>{c.innerHTML+=`<div class="doc-item"><div><b>${d.tipo}</b><br><small>${d.nombreArchivo}</small></div><div><a href="${d.dataUrl}" download="${d.nombreArchivo}" class="btn" style="padding:6px 10px;background:var(--green);color:#000">📥</a> <button class="btn" style="background:#333" onclick="borrarDoc('${jid}','${id}')">X</button></div></div>`;});}}const todos=listaTodosDocs;todos.innerHTML='';Object.entries(documentos).forEach(([jid,docs])=>{Object.entries(docs).forEach(([did,d])=>{todos.innerHTML+=`<div class="doc-item"><div><b>${d.jugadorNombre}</b> - ${d.tipo}</div></div>`;});});}
 window.borrarDoc=(jid,did)=>{if(confirm('Borrar?'))remove(ref(db,'documentos/'+jid+'/'+did));}
 window.editarJugador=(id)=>{const j=jugadores[id];editId.value=id;editNombre.value=j.nombre;editFechaNac.value=j.fechaNacimiento;editGenero.value=j.genero;editPos.value=j.pos;editTel.value=j.tel;editFormaPago.value=j.formaPago;editFpago.value=j.fechaPago;editFinsc.value=j.fechaInscripcion||'';editInscPagada.checked=j.inscPagada?true:false;calcEdadEdit();document.getElementById('modalEdit').style.display='flex';}
 window.cerrarModal=()=>{document.getElementById('modalEdit').style.display='none';}
 window.guardarEdicionFIX=async()=>{
-  var id=editId.value;
-  var edad=calcEdad(editFechaNac.value);
-  var nuevaFechaPago=editFpago.value;
-  var nuevaFechaInsc=editFinsc.value;
-  var viejoJugador=jugadores[id];
-  if(!viejoJugador) return;
-  if(nuevaFechaInsc && nuevaFechaPago && nuevaFechaInsc > nuevaFechaPago){
-    nuevaFechaInsc = nuevaFechaPago;
-  }
-  var updateData={
-    nombre:editNombre.value,
-    fechaNacimiento:editFechaNac.value,
-    edad:edad,
-    genero:editGenero.value,
-    pos:editPos.value,
-    tel:editTel.value,
-    formaPago:editFormaPago.value,
-    fechaPago:nuevaFechaPago,
-    fechaInscripcion:nuevaFechaInsc||viejoJugador.fechaInscripcion||nuevaFechaPago,
-    categoria:getCat(edad).id,
-    inscPagada:editInscPagada.checked
-  };
-  var fileFoto=document.getElementById('fileFotoEdit').files[0];
-  if(fileFoto){
-    var base=await toBase64(fileFoto);
-    updateData.fotoPerfil=base;
-  }
+  var id=editId.value; var edad=calcEdad(editFechaNac.value); var nuevaFechaPago=editFpago.value; var nuevaFechaInsc=editFinsc.value; var viejoJugador=jugadores[id]; if(!viejoJugador) return; if(nuevaFechaInsc && nuevaFechaPago && nuevaFechaInsc > nuevaFechaPago){ nuevaFechaInsc = nuevaFechaPago; }
+  var updateData={ nombre:editNombre.value, fechaNacimiento:editFechaNac.value, edad:edad, genero:editGenero.value, pos:editPos.value, tel:editTel.value, formaPago:editFormaPago.value, fechaPago:nuevaFechaPago, fechaInscripcion:nuevaFechaInsc||viejoJugador.fechaInscripcion||nuevaFechaPago, categoria:getCat(edad).id, inscPagada:editInscPagada.checked };
+  var fileFoto=document.getElementById('fileFotoEdit').files[0]; if(fileFoto){ var base=await toBase64(fileFoto); updateData.fotoPerfil=base; }
   var mesNuevo=getMesDeFecha(nuevaFechaPago);
-  if(!pagosMensuales[mesNuevo] || !pagosMensuales[mesNuevo][id]){
-    await set(ref(db,'pagosMensuales/'+mesNuevo+'/'+id),{
-      jugadorId:id,
-      nombre:editNombre.value,
-      fecha:nuevaFechaPago,
-      monto:configClub.mensualidad
-    });
-  }
-  await update(ref(db,'jugadores/'+id),updateData);
-  alert('✅ Guardado - deuda corregida');
-  cerrarModal();
+  if(!pagosMensuales[mesNuevo] || !pagosMensuales[mesNuevo][id]){ await set(ref(db,'pagosMensuales/'+mesNuevo+'/'+id),{ jugadorId:id, nombre:editNombre.value, fecha:nuevaFechaPago, monto:configClub.mensualidad }); }
+  await update(ref(db,'jugadores/'+id),updateData); alert('✅ Guardado'); cerrarModal();
 }
 function render(){
 const b=document.getElementById('buscar')?.value.toLowerCase().trim()||'';
 const cont=document.getElementById('list');
-if(!cont)return;
-cont.innerHTML='';
+if(!cont)return; cont.innerHTML='';
 let entries=Object.entries(jugadores);
 if(b!==''){entries=entries.filter(([k,v])=>v.nombre.toLowerCase().includes(b));}
 if(filtroCat!=='Todos')entries=entries.filter(([k,v])=>getCat(v.edad).id===filtroCat);
 if(filtroGenero!=='Todos')entries=entries.filter(([k,v])=>v.genero===filtroGenero);
 const mes=getMesActual();const pagadosMes=pagosMensuales[mes]||{};const tot=Object.keys(jugadores).length;const pag=Object.keys(pagadosMes).length;
-let totalAcum=0;let inscPagadas=0;let totalH=0,totalM=0;
-Object.keys(jugadores).forEach(jid=>{totalAcum+=getDeudaAcumulada(jid).total;if(jugadores[jid].inscPagada)inscPagadas++;if(jugadores[jid].genero==='Masculino')totalH++;else if(jugadores[jid].genero==='Femenino')totalM++;});
+let totalAcum=0;let inscPagadas=0;let totalH=0,totalM=0;let totalPausa=0;
+Object.keys(jugadores).forEach(jid=>{
+  const j=jugadores[jid];
+  if(j.mensualidadPausada){ totalPausa++; }
+  else { totalAcum+=getDeudaAcumulada(jid).total; }
+  if(j.inscPagada)inscPagadas++;
+  if(j.genero==='Masculino')totalH++;else if(j.genero==='Femenino')totalM++;
+});
 if(kpiTotal)kpiTotal.innerText=tot;
 if(document.getElementById('kpiTodos'))kpiTodos.innerText=tot;
 if(document.getElementById('kpiHombres'))kpiHombres.innerText=totalH;
@@ -412,13 +426,31 @@ if(document.getElementById('kpiMujeres'))kpiMujeres.innerText=totalM;
 if(kpiMesPagaron)kpiMesPagaron.innerText=pag;
 if(kpiPorCobrar)kpiPorCobrar.innerText='$'+totalAcum.toLocaleString();
 if(kpiInscPagadas)kpiInscPagadas.innerText=inscPagadas+'/'+tot;
+if(document.getElementById('kpiPausa')) document.getElementById('kpiPausa').innerText=totalPausa;
 const resDiv=document.getElementById('resultadoBusqueda');
-if(resDiv){if(b!=='') resDiv.innerText=`${entries.length} resultados`; else resDiv.innerText=`Total: ${tot}`;}
+if(resDiv){if(b!=='') resDiv.innerText=`${entries.length} resultados`; else resDiv.innerText=`Total: ${tot} - Pausa: ${totalPausa}`;}
 const contPagos=listPagos;const contInsc=listInsc;if(contPagos)contPagos.innerHTML='';if(contInsc)contInsc.innerHTML='';
-entries.forEach(([id,j])=>{const deuda=getDeudaAcumulada(id);const cat=getCat(j.edad);const pagoActual=pagosMensuales[mes]?.[id];const hab=habilidades[id]||{};let promHab=0,cntHab=0;Object.values(hab).forEach(v=>{promHab+=v;cntHab++;});promHab=cntHab? (promHab/cntHab).toFixed(1):'-';let fotoMini=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">🏐</div>`;let estadoHtml;if(deuda.meses.length===0){estadoHtml=`<div style="background:#fff;color:#000;padding:8px;border-radius:10px"><b>AL DIA ✅ ⭐${promHab}</b><br><small>${formatoFecha(j.fechaPago)}</small></div>`;}else{estadoHtml=`<div style="background:var(--red);color:#fff;padding:8px;border-radius:10px"><b>DEBE ${deuda.meses.length} MES ⭐${promHab}</b><br><small>$${deuda.total.toLocaleString()}</small><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">`+deuda.meses.map(m=>`<button class="btn" style="padding:6px 10px;background:var(--green);color:#000" onclick="pagarMesAtrasado('${id}','${m}')">PAGAR ${m}</button>`).join('')+`</div></div>`;}let cancelarHtml='';if(pagoActual){cancelarHtml+=`<button class="btn" style="background:#ff1744;color:white;margin-top:6px;width:100%" onclick="cancelarPago('${id}','${mes}')">❌ CANCELAR ${mes}</button>`;}let wasaBtn=`<button class="btn btn-green" style="width:100%;margin-top:6px" onclick="enviarWasa('${id}')">📲 WASA</button>`;const html=`<div style="border:1px solid var(--border);padding:12px;margin:8px 0;border-radius:14px;background:#000"><div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">${fotoMini}<div><b>${j.nombre}</b><br><span style="color:${cat.c};font-size:11px">[${cat.t} ${j.genero==='Masculino'?'👦':'👧'}] ⭐${promHab}</span></div></div><small>${j.pos} • ${formatoFecha(j.fechaPago)}</small><div style="margin-top:8px">${estadoHtml}</div>${cancelarHtml}${wasaBtn}<div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-white" style="flex:1" onclick="editarJugador('${id}')">EDITAR</button><button class="btn" style="flex:1;background:#7c4dff" onclick="openTab('t8',document.querySelectorAll('.menu button')[2]);setTimeout(()=>{document.getElementById('selHabJug').value='${id}';renderHabilidades();},200)">⭐</button><button class="btn" style="flex:1" onclick="pagar('${id}')">PAGAR</button><button class="btn" style="background:#333" onclick="delJugador('${id}')">X</button></div></div>`;cont.innerHTML+=html;if(contPagos)contPagos.innerHTML+=html;let inscHtml=j.inscPagada?`<span class="badge al-dia">PAGADA ✅</span> <button class="btn" style="padding:4px 8px;background:#ff1744;color:white;margin-left:6px" onclick="cancelarInsc('${id}')">❌</button>`:`<span class="badge debe">DEBE</span> <button class="btn" style="padding:4px 8px;background:var(--yellow);color:black" onclick="pagarInsc('${id}')">PAGAR</button>`;const htmlInsc=`<div style="border:1px solid var(--border);padding:10px;margin:6px 0;border-radius:12px;background:#000"><div style="display:flex;gap:6px;align-items:center">${fotoMini}<b>${j.nombre}</b> [${cat.t}]</div><div style="margin-top:6px">${inscHtml}</div></div>`;if(contInsc)contInsc.innerHTML+=htmlInsc;});renderCat();renderCatFiltrada();renderDocs();renderHist();renderSolic();renderRanking();renderUniformes();renderModelosUniformes();}
+entries.forEach(([id,j])=>{
+  const deuda=getDeudaAcumulada(id);
+  const cat=getCat(j.edad);
+  const pagoActual=pagosMensuales[mes]?.[id];
+  const hab=habilidades[id]||{};let promHab=0,cntHab=0;Object.values(hab).forEach(v=>{promHab+=v;cntHab++;});promHab=cntHab? (promHab/cntHab).toFixed(1):'-';
+  let fotoMini=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">🏐</div>`;
+  let estadoHtml;
+  if(j.mensualidadPausada){
+    estadoHtml=`<div style="background:var(--yellow);color:#000;padding:8px;border-radius:10px"><b>⏸ EN PAUSA - No genera cobro</b><br><small>Desde ${j.fechaPausa||''} - Deuda congelada $${(j.deudaCongelada||0).toLocaleString()}</small></div>`;
+  }else if(deuda.meses.length===0){
+    estadoHtml=`<div style="background:#fff;color:#000;padding:8px;border-radius:10px"><b>AL DIA ✅ ⭐${promHab}</b><br><small>${formatoFecha(j.fechaPago)}</small></div>`;
+  }else{
+    estadoHtml=`<div style="background:var(--red);color:#fff;padding:8px;border-radius:10px"><b>DEBE ${deuda.meses.length} MES ⭐${promHab}</b><br><small>$${deuda.total.toLocaleString()}</small><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">`+deuda.meses.map(m=>`<button class="btn" style="padding:6px 10px;background:var(--green);color:#000" onclick="pagarMesAtrasado('${id}','${m}')">PAGAR ${m}</button>`).join('')+`</div></div>`;
+  }
+  let cancelarHtml='';if(pagoActual && !j.mensualidadPausada){cancelarHtml+=`<button class="btn" style="background:#ff1744;color:white;margin-top:6px;width:100%" onclick="cancelarPago('${id}','${mes}')">❌ CANCELAR ${mes}</button>`;}
+  let wasaBtn=`<button class="btn btn-green" style="width:100%;margin-top:6px" onclick="enviarWasa('${id}')">📲 WASA</button>`;
+  const pausaBtn = j.mensualidadPausada ? `<button class="btn btn-reanudar" style="flex:1" onclick="reanudarJugador('${id}')">▶️ REANUDAR</button>` : `<button class="btn btn-pausa" style="flex:1" onclick="pausarJugador('${id}')">⏸ PAUSAR</button>`;
+  const html=`<div style="border:1px solid var(--border);padding:12px;margin:8px 0;border-radius:14px;background:#000" class="${j.mensualidadPausada?'pausada':''}"><div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">${fotoMini}<div><b>${j.nombre} ${j.mensualidadPausada?'<span class="badge-pausa">⏸ EN PAUSA</span>':''}</b><br><span style="color:${cat.c};font-size:11px">[${cat.t} ${j.genero==='Masculino'?'👦':'👧'}] ⭐${promHab}</span></div></div><small>${j.pos} • ${formatoFecha(j.fechaPago)} ${j.mensualidadPausada?`• Pausa ${j.fechaPausa}`:''}</small><div style="margin-top:8px">${estadoHtml}</div>${cancelarHtml}${wasaBtn}<div style="margin-top:8px;display:flex;gap:6px">${pausaBtn}<button class="btn btn-white" style="flex:1" onclick="editarJugador('${id}')">EDITAR</button><button class="btn" style="flex:1;background:#7c4dff" onclick="openTab('t8',document.querySelectorAll('.menu button')[2]);setTimeout(()=>{document.getElementById('selHabJug').value='${id}';renderHabilidades();},200)">⭐</button><button class="btn" style="flex:1" onclick="pagar('${id}')">PAGAR</button><button class="btn" style="background:#333" onclick="delJugador('${id}')">X</button></div></div>`;cont.innerHTML+=html;if(contPagos)contPagos.innerHTML+=html;let inscHtml=j.inscPagada?`<span class="badge al-dia">PAGADA ✅</span> <button class="btn" style="padding:4px 8px;background:#ff1744;color:white;margin-left:6px" onclick="cancelarInsc('${id}')">❌</button>`:`<span class="badge debe">DEBE</span> <button class="btn" style="padding:4px 8px;background:var(--yellow);color:black" onclick="pagarInsc('${id}')">PAGAR</button>`;const htmlInsc=`<div style="border:1px solid var(--border);padding:10px;margin:6px 0;border-radius:12px;background:#000"><div style="display:flex;gap:6px;align-items:center">${fotoMini}<b>${j.nombre} ${j.mensualidadPausada?'<span class="badge-pausa">PAUSA</span>':''}</b> [${cat.t}]</div><div style="margin-top:6px">${inscHtml}</div></div>`;if(contInsc)contInsc.innerHTML+=htmlInsc;});renderCat();renderCatFiltrada();renderDocs();renderHist();renderSolic();renderRanking();renderUniformes();renderModelosUniformes();}
 function renderCat(){const cats={pequena:{M:[],F:[]},sub15:{M:[],F:[]},sub17:{M:[],F:[]},sub20:{M:[],F:[]}};Object.values(jugadores).forEach(j=>{const id=getCat(j.edad).id;if(!cats[id])return;if(j.genero==='Masculino')cats[id].M.push(j); else cats[id].F.push(j);});const cont=document.getElementById('catContainer');if(!cont)return;cont.innerHTML='';Object.keys(cats).forEach(k=>{const color={pequena:'var(--blue)',sub15:'#ffab00',sub17:'#ff2d6b',sub20:'#7c4dff'}[k];cont.innerHTML+=`<div style="background:var(--card);border:${filtroCat===k?'2px solid var(--yellow)':'1px solid var(--border)'};border-left:6px solid ${color};padding:12px;border-radius:14px"><h3>${k.toUpperCase()} <span style="background:${color};color:black;padding:2px 8px;border-radius:10px;font-size:11px">${cats[k].M.length+cats[k].F.length}</span></h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><div style="background:${filtroCat===k&&filtroGenero==='Masculino'?'var(--blue)':'#000'};border:1px solid var(--blue);padding:8px;border-radius:10px;cursor:pointer" onclick="filtrarCat('${k}','Masculino')"><b>👦 H</b><br><b style="font-size:18px">${cats[k].M.length}</b></div><div style="background:${filtroCat===k&&filtroGenero==='Femenino'?'var(--pink)':'#000'};border:1px solid var(--pink);padding:8px;border-radius:10px;cursor:pointer" onclick="filtrarCat('${k}','Femenino')"><b>👧 M</b><br><b style="font-size:18px">${cats[k].F.length}</b></div></div><button class="btn" style="width:100%;margin-top:6px;background:${filtroCat===k&&filtroGenero==='Todos'?'var(--yellow)':'#333'};color:${filtroCat===k&&filtroGenero==='Todos'?'black':'white'}" onclick="filtrarCat('${k}','Todos')">VER TODOS</button></div>`;});}
-function renderCatFiltrada(){const cont=document.getElementById('listCategoriaFiltrada');if(!cont)return;let entries=Object.entries(jugadores);if(filtroCat!=='Todos')entries=entries.filter(([k,v])=>getCat(v.edad).id===filtroCat);if(filtroGenero!=='Todos')entries=entries.filter(([k,v])=>v.genero===filtroGenero);const titulo=document.getElementById('tituloListaCat');if(titulo){if(filtroCat==='Todos'&&filtroGenero==='Todos') titulo.innerText=`📋 Todos (${entries.length})`;else titulo.innerText=`📋 ${filtroCat!=='Todos'?filtroCat.toUpperCase()+' ':''}${filtroGenero!=='Todos'?filtroGenero.toUpperCase()+' ':''}(${entries.length})`;}cont.innerHTML='';if(entries.length===0){cont.innerHTML='<p style="opacity:.5;padding:8px">No hay</p>';return;}entries.forEach(([id,j])=>{const deuda=getDeudaAcumulada(id);const hab=habilidades[id]||{};let prom=0,c=0;Object.values(hab).forEach(v=>{prom+=v;c++;});prom=c? (prom/c).toFixed(1):'-';let fotoMini=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">🏐</div>`;let estado=deuda.meses.length===0?`<span class="badge al-dia">AL DIA</span>`:`<span class="badge debe">DEBE ${deuda.meses.length}</span>`;cont.innerHTML+=`<div style="border:1px solid var(--border);padding:10px;margin:6px 0;border-radius:12px;background:#000;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;gap:6px;align-items:center">${fotoMini}<div><b>${j.nombre}</b><br><small>⭐${prom}</small></div></div><div style="display:flex;gap:4px;align-items:center">${estado}<button class="btn btn-green" style="padding:4px 8px" onclick="enviarWasa('${id}')">WASA</button></div></div>`;});}
-function renderAsis(){const f=fAsis.value;const cont=listAsis;if(!cont)return;cont.innerHTML='';Object.entries(jugadores).forEach(([id,j])=>{const pres=asistencias[f]?.[j.nombre];let fotoMini=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">🏐</div>`;cont.innerHTML+=`<div class="asis-row"><div style="display:flex;gap:6px;align-items:center">${fotoMini}<div><b>${j.nombre}</b><br><small>${getCat(j.edad).t}</small></div></div><div class="switch ${pres?'on':''}" onclick="toggle('${j.nombre}')"></div></div>`;});}
+function renderCatFiltrada(){const cont=document.getElementById('listCategoriaFiltrada');if(!cont)return;let entries=Object.entries(jugadores);if(filtroCat!=='Todos')entries=entries.filter(([k,v])=>getCat(v.edad).id===filtroCat);if(filtroGenero!=='Todos')entries=entries.filter(([k,v])=>v.genero===filtroGenero);const titulo=document.getElementById('tituloListaCat');if(titulo){if(filtroCat==='Todos'&&filtroGenero==='Todos') titulo.innerText=`📋 Todos (${entries.length})`;else titulo.innerText=`📋 ${filtroCat!=='Todos'?filtroCat.toUpperCase()+' ':''}${filtroGenero!=='Todos'?filtroGenero.toUpperCase()+' ':''}(${entries.length})`;}cont.innerHTML='';if(entries.length===0){cont.innerHTML='<p style="opacity:.5;padding:8px">No hay</p>';return;}entries.forEach(([id,j])=>{const deuda=getDeudaAcumulada(id);const hab=habilidades[id]||{};let prom=0,c=0;Object.values(hab).forEach(v=>{prom+=v;c++;});prom=c? (prom/c).toFixed(1):'-';let fotoMini=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">🏐</div>`;let estado=j.mensualidadPausada?`<span class="badge-pausa">⏸ PAUSA</span>`:deuda.meses.length===0?`<span class="badge al-dia">AL DIA</span>`:`<span class="badge debe">DEBE ${deuda.meses.length}</span>`;cont.innerHTML+=`<div style="border:1px solid var(--border);padding:10px;margin:6px 0;border-radius:12px;background:#000;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;gap:6px;align-items:center">${fotoMini}<div><b>${j.nombre}</b><br><small>⭐${prom}</small></div></div><div style="display:flex;gap:4px;align-items:center">${estado}<button class="btn btn-green" style="padding:4px 8px" onclick="enviarWasa('${id}')">WASA</button></div></div>`;});}
+function renderAsis(){const f=fAsis.value;const cont=listAsis;if(!cont)return;cont.innerHTML='';Object.entries(jugadores).forEach(([id,j])=>{const pres=asistencias[f]?.[j.nombre];let fotoMini=j.fotoPerfil?`<img src="${j.fotoPerfil}" class="perfil-img-small">`:`<div class="perfil-img-small" style="display:flex;align-items:center;justify-content:center">🏐</div>`;cont.innerHTML+=`<div class="asis-row"><div style="display:flex;gap:6px;align-items:center">${fotoMini}<div><b>${j.nombre}</b><br><small>${getCat(j.edad).t} ${j.mensualidadPausada?'<span style="color:var(--yellow)">⏸ PAUSA</span>':''}</small></div></div><div class="switch ${pres?'on':''}" onclick="toggle('${j.nombre}')"></div></div>`;});}
 function renderHist(){const c=hist;if(!c)return;c.innerHTML='';Object.keys(asistencias).sort().reverse().forEach(fecha=>{const reg=asistencias[fecha]||{};const nombres=Object.entries(reg).filter(([,v])=>v).map(([n])=>n);if(!nombres.length)return;c.innerHTML+=`<div style="padding:10px;background:#000;border:1px solid var(--border);margin:6px 0;border-radius:12px"><b style="color:var(--red)">${fecha}</b> - ${nombres.length}<br><small>${nombres.join(', ')}</small></div>`;});}
 window.toggle=(n)=>{const f=fAsis.value;if(!asistencias[f])asistencias[f]={};asistencias[f][n]=!asistencias[f][n];set(ref(db,'asistencias/'+f),asistencias[f]);}
 window.marcarTodos=(v)=>{const f=fAsis.value;const obj={};Object.values(jugadores).forEach(j=>obj[j.nombre]=v);set(ref(db,'asistencias/'+f),obj);}
@@ -434,7 +466,7 @@ document.getElementById('fileFotoPerfilJug')?.addEventListener('change',function
 document.getElementById('fileFotoNuevo')?.addEventListener('change',function(){if(this.files[0]){const r=new FileReader();r.onload=e=>{const img=document.getElementById('previewFotoNuevo');img.src=e.target.result;img.style.display='block';};r.readAsDataURL(this.files[0]);}});
 document.getElementById('fileFotoEdit')?.addEventListener('change',function(){if(this.files[0]){const r=new FileReader();r.onload=e=>{const img=document.getElementById('previewFotoEdit');img.src=e.target.result;img.style.display='block';};r.readAsDataURL(this.files[0]);}});
 document.getElementById('fileModeloVideo')?.addEventListener('change',function(){if(this.files[0]){const url=URL.createObjectURL(this.files[0]);const v=document.getElementById('previewModeloVideo');v.src=url;v.style.display='block';document.getElementById('txtModeloVideo').innerText=this.files[0].name+' '+(this.files[0].size/1024/1024).toFixed(1)+'MB';}});
-onValue(ref(db,'jugadores'),s=>{jugadores=s.val()||{};render();filtrarJugadoresSelect();filtrarSelHabilidades();renderUniformes();if(currentJugadorId) mostrarFotoPerfil();const selU=document.getElementById('selUnifJug');if(selU){selU.innerHTML='';Object.entries(jugadores).forEach(([k,v])=>{const o=document.createElement('option');o.value=k;o.textContent=`${v.nombre} - ${getCat(v.edad).t}`;selU.appendChild(o);});}});
+onValue(ref(db,'jugadores'),s=>{jugadores=s.val()||{};render();filtrarJugadoresSelect();filtrarSelHabilidades();renderUniformes();if(currentJugadorId) mostrarFotoPerfil();const selU=document.getElementById('selUnifJug');if(selU){selU.innerHTML='';Object.entries(jugadores).forEach(([k,v])=>{const o=document.createElement('option');o.value=k;o.textContent=`${v.nombre} - ${getCat(v.edad).t}${v.mensualidadPausada?' ⏸ PAUSA':''}`;selU.appendChild(o);});}});
 onValue(ref(db,'asistencias'),s=>{asistencias=s.val()||{};renderAsis();renderHist();});
 onValue(ref(db,'solicitudes'),s=>{solicitudes=s.val()||{};renderSolic();});
 onValue(ref(db,'pagosMensuales'),s=>{pagosMensuales=s.val()||{};render();});
